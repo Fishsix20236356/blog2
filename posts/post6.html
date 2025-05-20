@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post 6</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/particles.css">
+</head>
+<body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+    
+    <!-- Blog Content -->
+    <div class="container">
+        <header>
+            <h1 id="post-title">加载失败了</h1>
+            <div id="post-date" class="post-date">May 6, 2025</div>
+            <a href="../index.html" class="back-link">← Back to all posts</a>
+        </header>
+        
+        <main class="post-content">
+            <div id="markdown-content">
+                <!-- Markdown content will be loaded here -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scripts     -->
+    <script src="../js/particles.min.js"></script>
+    
+    <script src="../js/marked.min.js"></script>
+
+    <script src="../js/particles-config.js"></script>
+    <script>
+        // Function to get URL parameters
+        function getParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+        
+        // Load and render markdown content
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the post ID from filename or URL parameter
+            const postId = window.location.pathname.split('/').pop().replace('.html', '') || getParam('post');
+            
+            // Fetch the markdown file
+            fetch(`../markdown/${postId}.md`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Markdown file not found');
+                    }
+                    return response.text();
+                })
+                .then(markdown => {
+                    // Render markdown content
+                    document.getElementById('markdown-content').innerHTML = marked.parse(markdown);
+                    
+                    // Extract title and date from markdown (if first line is # Title and second is date)
+                    const lines = markdown.split('\n');
+                    if (lines[0].startsWith('# ')) {
+                        document.getElementById('post-title').textContent = lines[0].substring(2);
+                        document.title = lines[0].substring(2);
+                    }
+                    
+                    if (lines[1] && lines[1].match(/\d{4}-\d{2}-\d{2}/)) {
+                        document.getElementById('post-date').textContent = new Date(lines[1]).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading markdown:', error);
+                    document.getElementById('markdown-content').innerHTML = '<p>Sorry, this post could not be loaded.</p>';
+                });
+        });
+    </script>
+</body>
+</html>

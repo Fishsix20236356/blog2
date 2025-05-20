@@ -1,0 +1,26 @@
+/* Enhanced Particles CSS */
+#particles-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: transparent; /* Changed from #f8f9fa to transparent */
+  background-image: url('../images/background.gif'); /* Add your background image path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Add an overlay to improve text readability if needed */
+#particles-js:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.4); /* Semi-transparent white overlay */
+  z-index: -1;
+}

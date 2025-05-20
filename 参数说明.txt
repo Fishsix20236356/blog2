@@ -1,0 +1,5 @@
+npm install -g http-server
+http-server
+http://localhost:8080/posts/post1.html
+
+"line_linked": 在particles-config.js中，代表线的属性

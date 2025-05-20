@@ -1,0 +1,31 @@
+# Personal Blog Implementation
+
+## File Structure
+```
+blog/
+├── index.html                # Homepage with blog previews
+├── css/
+│   ├── style.css             # Main styles
+│   └── particles.css         # Particle effect styles
+├── js/
+│   ├── particles.min.js      # Particles.js library
+│   ├── particles-config.js   # Configuration for particles
+│   └── marked.min.js         # Markdown parser
+├── posts/
+│   ├── post1.html            # Individual blog post pages
+│   ├── post2.html
+│   └── post3.html
+└── markdown/
+    ├── post1.md              # Markdown content for each post
+    ├── post2.md
+    └── post3.md
+```
+
+## Implementation Steps
+
+1. Set up the basic HTML structure
+2. Add particles.js for the dynamic background
+3. Create the blog preview cards with borders on the homepage
+4. Create the blog post template with markdown support
+5. Style everything with CSS
+6. Test and deploy

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Particle System Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        #container {
+            width: 100%;
+            height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            padding: 30px;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 1px;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            position: absolute;
+            right: 30px;
+            top: 120px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            width: 320px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-group:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .control-group h3 {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        
+        /* Form Elements */
+        label {
+            display: block;
+            font-size: 13px;
+            color: #ccc;
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        select:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+        
+        select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        /* Slider Styles */
+        .slider-container {
+            margin-bottom: 20px;
+        }
+        
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .slider-value {
+            font-size: 14px;
+            color: #4a9eff;
+            font-weight: 500;
+            background: rgba(74, 158, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #4a9eff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #5fa8ff;
+            transform: scale(1.1);
+            box-shadow: 0 2px 12px rgba(74, 158, 255, 0.5);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #4a9eff;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+        }
+        
+        /* Radio Buttons */
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .radio-option {
+            flex: 1;
+            position: relative;
+        }
+        
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .radio-option label {
+            display: block;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0;
+        }
+        
+        .radio-option input[type="radio"]:checked + label {
+            background: rgba(74, 158, 255, 0.2);
+            border-color: #4a9eff;
+            color: #4a9eff;
+        }
+        
+        .radio-option label:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Info Box */
+        .info-box {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        
+        .info-box h4 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #4a9eff;
+        }
+        
+        .info-box span {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin: 0 2px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Loading */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        /* Performance Stats */
+        .stats {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px 20px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        
+        .stats div {
+            margin-bottom: 5px;
+        }
+        
+        .stats div:last-child {
+            margin-bottom: 0;
+        }
+        
+        .stats span {
+            color: #4a9eff;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    
+    <!-- Header -->
+    <div class="header">
+        <h1>3D PARTICLE SYSTEM</h1>
+        <p>Interactive particle morphing demonstration with customizable parameters</p>
+    </div>
+    
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <div class="control-group">
+            <h3>Model Selection</h3>
+            <select id="modelSelect">
+                <option value="0">Sphere</option>
+                <option value="1">Heart Shape</option>
+                <option value="2">Star</option>
+                <option value="3">Text "HELLO"</option>
+                <option value="4">Spiral</option>
+                <option value="5">DNA Helix</option>
+                <option value="6">Mathematical Surface</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <h3>Particle Settings</h3>
+            
+            <div class="slider-container">
+                <div class="slider-header">
+                    <label>Particle Count</label>
+                    <span class="slider-value" id="particleCountValue">10000</span>
+                </div>
+                <input type="range" id="particleCount" min="1000" max="30000" value="10000" step="1000">
+            </div>
+            
+            <div class="slider-container">
+                <div class="slider-header">
+                    <label>Particle Size</label>
+                    <span class="slider-value" id="particleSizeValue">3</span>
+                </div>
+                <input type="range" id="particleSize" min="1" max="10" value="3" step="0.5">
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h3>Color Theme</h3>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="colorWhite" name="colorTheme" value="white" checked>
+                    <label for="colorWhite">Pure White</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="colorCycle" name="colorTheme" value="cycle">
+                    <label for="colorCycle">Color Cycle</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info Box -->
+    <div class="info-box">
+        <h4>Controls</h4>
+        <span>Drag</span> to rotate<br>
+        <span>Scroll</span> to zoom<br>
+        <span>Click</span> model dropdown to morph
+    </div>
+    
+    <!-- Performance Stats -->
+    <div class="stats" id="stats">
+        <div>FPS: <span id="fps">60</span></div>
+        <div>Particles: <span id="particleStats">10000</span></div>
+    </div>
+    
+    <div class="loading" id="loading">Loading...</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <script>
+        // Global variables
+        let scene, camera, renderer, container;
+        let particles, geometry, material;
+        let currentModelIndex = 0;
+        let isAnimating = false;
+        let models = [];
+        let colorTheme = 'white';
+        let time = 0;
+        let particleCount = 10000;
+        let particleSize = 3;
+        
+        // FPS counter
+        let fps = 0;
+        let frameCount = 0;
+        let lastTime = performance.now();
+        
+        // Initialize the scene
+        function init() {
+            container = document.getElementById('container');
+            
+            // Create scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000000, 0.0005);
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(
+                60,
+                window.innerWidth / window.innerHeight,
+                1,
+                10000
+            );
+            camera.position.z = 600;
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true 
+            });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Create particle system
+            createParticleSystem();
+            
+            // Create all models
+            createAllModels();
+            
+            // Add event listeners
+            addEventListeners();
+            
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Start animation loop
+            animate();
+        }
+        
+        // Create the main particle system
+        function createParticleSystem() {
+            geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            // Initialize positions
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 500;
+                positions[i + 1] = (Math.random() - 0.5) * 500;
+                positions[i + 2] = (Math.random() - 0.5) * 500;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            // Create particle material
+            material = new THREE.PointsMaterial({
+                size: particleSize,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                opacity: 0.9,
+                sizeAttenuation: true
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            // Apply initial color theme
+            updateColors();
+        }
+        
+        // Create all models
+        function createAllModels() {
+            // Model 0: Sphere
+            const sphereGeometry = new THREE.SphereGeometry(150, 32, 32);
+            models.push(getVerticesFromGeometry(sphereGeometry));
+            
+            // Model 1: Heart shape
+            models.push(createHeartModel());
+            
+            // Model 2: Star shape
+            models.push(createStarModel());
+            
+            // Model 3: Text "HELLO"
+            models.push(createTextModel());
+            
+            // Model 4: Spiral
+            models.push(createSpiralModel());
+            
+            // Model 5: DNA Helix
+            models.push(createDNAHelixModel());
+            
+            // Model 6: Mathematical surface
+            models.push(createMathematicalSurface());
+            
+            // Apply first model
+            transitionToModel(0);
+        }
+        
+        // Model creation functions
+        function createHeartModel() {
+            const vertices = [];
+            const scale = 10;
+            
+            for (let i = 0; i < 1000; i++) {
+                const t = (i / 1000) * Math.PI * 2;
+                
+                const x = scale * 16 * Math.pow(Math.sin(t), 3);
+                const y = scale * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                const z = (Math.random() - 0.5) * 50;
+                
+                vertices.push({ x, y, z });
+            }
+            
+            // Fill volume
+            for (let i = 0; i < 500; i++) {
+                const baseVertex = vertices[i % vertices.length];
+                for (let j = 0; j < 5; j++) {
+                    vertices.push({
+                        x: baseVertex.x + (Math.random() - 0.5) * 30,
+                        y: baseVertex.y + (Math.random() - 0.5) * 30,
+                        z: baseVertex.z + (Math.random() - 0.5) * 30
+                    });
+                }
+            }
+            
+            return vertices;
+        }
+        
+        function createStarModel() {
+            const vertices = [];
+            const outerRadius = 200;
+            const innerRadius = 80;
+            const points = 5;
+            const depth = 50;
+            
+            for (let i = 0; i < points * 2; i++) {
+                const angle = (i / (points * 2)) * Math.PI * 2;
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                
+                for (let z = -depth; z <= depth; z += 10) {
+                    vertices.push({
+                        x: Math.cos(angle) * radius,
+                        y: Math.sin(angle) * radius,
+                        z: z
+                    });
+                }
+            }
+            
+            // Fill the star
+            for (let i = 0; i < 1000; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = Math.random();
+                const radius = r < 0.5 ? Math.random() * innerRadius : innerRadius + Math.random() * (outerRadius - innerRadius) * 0.5;
+                
+                vertices.push({
+                    x: Math.cos(angle) * radius * r,
+                    y: Math.sin(angle) * radius * r,
+                    z: (Math.random() - 0.5) * depth
+                });
+            }
+            
+            return vertices;
+        }
+        
+        function createTextModel() {
+            const vertices = [];
+            const letterSpacing = 80;
+            const scale = 20;
+            
+            const letters = {
+                'H': [[0,0], [0,1], [0,2], [0,3], [0,4], [2,0], [2,1], [2,2], [2,3], [2,4], [0,2], [1,2], [2,2]],
+                'E': [[0,0], [0,1], [0,2], [0,3], [0,4], [0,0], [1,0], [2,0], [0,2], [1,2], [0,4], [1,4], [2,4]],
+                'L': [[0,0], [0,1], [0,2], [0,3], [0,4], [0,0], [1,0], [2,0]],
+                'O': [[0,1], [0,2], [0,3], [1,0], [1,4], [2,1], [2,2], [2,3]]
+            };
+            
+            const text = 'HELLO';
+            let xOffset = -letterSpacing * 2;
+            
+            for (let i = 0; i < text.length; i++) {
+                const letter = letters[text[i]];
+                if (letter) {
+                    letter.forEach(([x, y]) => {
+                        for (let j = 0; j < 20; j++) {
+                            vertices.push({
+                                x: xOffset + x * scale + (Math.random() - 0.5) * 10,
+                                y: (y - 2) * scale + (Math.random() - 0.5) * 10,
+                                z: (Math.random() - 0.5) * 30
+                            });
+                        }
+                    });
+                }
+                xOffset += letterSpacing;
+            }
+            
+            return vertices;
+        }
+        
+        function createSpiralModel() {
+            const vertices = [];
+            const turns = 5;
+            const pointsPerTurn = 200;
+            const maxRadius = 200;
+            const height = 400;
+            
+            for (let i = 0; i < turns * pointsPerTurn; i++) {
+                const t = i / (turns * pointsPerTurn);
+                const angle = t * Math.PI * 2 * turns;
+                const radius = t * maxRadius;
+                const y = (t - 0.5) * height;
+                
+                vertices.push({
+                    x: Math.cos(angle) * radius,
+                    y: y,
+                    z: Math.sin(angle) * radius
+                });
+                
+                for (let j = 0; j < 3; j++) {
+                    vertices.push({
+                        x: Math.cos(angle) * (radius + Math.random() * 20),
+                        y: y + (Math.random() - 0.5) * 10,
+                        z: Math.sin(angle) * (radius + Math.random() * 20)
+                    });
+                }
+            }
+            
+            return vertices;
+        }
+        
+        function createDNAHelixModel() {
+            const vertices = [];
+            const height = 400;
+            const radius = 80;
+            const turns = 3;
+            const pointsPerTurn = 100;
+            
+            for (let strand = 0; strand < 2; strand++) {
+                const phaseShift = strand * Math.PI;
+                
+                for (let i = 0; i < turns * pointsPerTurn; i++) {
+                    const t = i / (turns * pointsPerTurn);
+                    const angle = t * Math.PI * 2 * turns + phaseShift;
+                    const y = (t - 0.5) * height;
+                    
+                    vertices.push({
+                        x: Math.cos(angle) * radius,
+                        y: y,
+                        z: Math.sin(angle) * radius
+                    });
+                    
+                    if (i % 10 === 0 && strand === 0) {
+                        const oppositeAngle = angle + Math.PI;
+                        for (let j = 0; j < 10; j++) {
+                            const connectionT = j / 10;
+                            vertices.push({
+                                x: Math.cos(angle) * radius * (1 - connectionT) + Math.cos(oppositeAngle) * radius * connectionT,
+                                y: y,
+                                z: Math.sin(angle) * radius * (1 - connectionT) + Math.sin(oppositeAngle) * radius * connectionT
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return vertices;
+        }
+        
+        function createMathematicalSurface() {
+            const vertices = [];
+            const size = 20;
+            
+            for (let u = 0; u < size; u++) {
+                for (let v = 0; v < size; v++) {
+                    const theta = (u / size) * Math.PI * 2;
+                    const phi = (v / size) * Math.PI * 2;
+                    
+                    const r = 100 + 50 * Math.cos(phi);
+                    const x = r * Math.cos(theta);
+                    const y = r * Math.sin(theta);
+                    const z = 100 * Math.sin(phi) * Math.sin(theta * 2);
+                    
+                    vertices.push({ x, y, z });
+                    
+                    for (let k = 0; k < 3; k++) {
+                        vertices.push({
+                            x: x + (Math.random() - 0.5) * 20,
+                            y: y + (Math.random() - 0.5) * 20,
+                            z: z + (Math.random() - 0.5) * 20
+                        });
+                    }
+                }
+            }
+            
+            return vertices;
+        }
+        
+        function getVerticesFromGeometry(geometry) {
+            const vertices = [];
+            const positions = geometry.attributes.position;
+            
+            for (let i = 0; i < positions.count; i++) {
+                vertices.push({
+                    x: positions.getX(i),
+                    y: positions.getY(i),
+                    z: positions.getZ(i)
+                });
+            }
+            
+            return vertices;
+        }
+        
+        // Color update function
+        function updateColors() {
+            const colors = geometry.attributes.color.array;
+            
+            if (colorTheme === 'white') {
+                // Simple white color
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    colors[i] = 1;     // R
+                    colors[i + 1] = 1; // G
+                    colors[i + 2] = 1; // B
+                }
+            } else if (colorTheme === 'cycle') {
+                // Animated color cycle: red → green → yellow → white → black
+                const cycleColors = [
+                    [1, 0, 0],    // Red
+                    [0, 1, 0],    // Green
+                    [1, 1, 0],    // Yellow
+                    [1, 1, 1],    // White
+                    [0, 0, 0]     // Black
+                ];
+                
+                const cycleDuration = 5; // seconds for full cycle
+                const cycleProgress = (time % cycleDuration) / cycleDuration;
+                const numColors = cycleColors.length;
+                const colorIndex = Math.floor(cycleProgress * numColors);
+                const nextColorIndex = (colorIndex + 1) % numColors;
+                const localProgress = (cycleProgress * numColors) % 1;
+                
+                const currentColor = cycleColors[colorIndex];
+                const nextColor = cycleColors[nextColorIndex];
+                
+                // Interpolate between current and next color
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+                    
+                    // Add wave effect based on particle index
+                    const waveOffset = (i / particleCount) * 0.3;
+                    const adjustedProgress = (localProgress + waveOffset) % 1;
+                    
+                    colors[i3] = currentColor[0] + (nextColor[0] - currentColor[0]) * adjustedProgress;
+                    colors[i3 + 1] = currentColor[1] + (nextColor[1] - currentColor[1]) * adjustedProgress;
+                    colors[i3 + 2] = currentColor[2] + (nextColor[2] - currentColor[2]) * adjustedProgress;
+                }
+            }
+            
+            geometry.attributes.color.needsUpdate = true;
+        }
+        
+        // Transition to new model
+        function transitionToModel(modelIndex) {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const targetModel = models[modelIndex];
+            const positions = geometry.attributes.position.array;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                const targetVertex = targetModel[i % targetModel.length];
+                
+                const startPos = {
+                    x: positions[i3],
+                    y: positions[i3 + 1],
+                    z: positions[i3 + 2]
+                };
+                
+                const tween = new TWEEN.Tween(startPos)
+                    .to({
+                        x: targetVertex.x,
+                        y: targetVertex.y,
+                        z: targetVertex.z
+                    }, 2000)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .delay(Math.random() * 500)
+                    .onUpdate(() => {
+                        positions[i3] = startPos.x;
+                        positions[i3 + 1] = startPos.y;
+                        positions[i3 + 2] = startPos.z;
+                    })
+                    .onComplete(() => {
+                        if (i === particleCount - 1) {
+                            isAnimating = false;
+                        }
+                    })
+                    .start();
+            }
+        }
+        
+        // Recreate particle system with new count
+        function recreateParticleSystem(newCount) {
+            // Remove old particles
+            scene.remove(particles);
+            geometry.dispose();
+            material.dispose();
+            
+            // Update count
+            particleCount = newCount;
+            
+            // Create new system
+            createParticleSystem();
+            
+            // Apply current model
+            transitionToModel(currentModelIndex);
+            
+            // Update stats
+            document.getElementById('particleStats').textContent = particleCount;
+        }
+        
+        // Event listeners
+        function addEventListeners() {
+            // Model selection
+            document.getElementById('modelSelect').addEventListener('change', (e) => {
+                currentModelIndex = parseInt(e.target.value);
+                transitionToModel(currentModelIndex);
+            });
+            
+            // Particle count slider
+            const particleCountSlider = document.getElementById('particleCount');
+            const particleCountValue = document.getElementById('particleCountValue');
+            
+            particleCountSlider.addEventListener('input', (e) => {
+                particleCountValue.textContent = e.target.value;
+            });
+            
+            particleCountSlider.addEventListener('change', (e) => {
+                const newCount = parseInt(e.target.value);
+                recreateParticleSystem(newCount);
+            });
+            
+            // Particle size slider
+            const particleSizeSlider = document.getElementById('particleSize');
+            const particleSizeValue = document.getElementById('particleSizeValue');
+            
+            particleSizeSlider.addEventListener('input', (e) => {
+                particleSize = parseFloat(e.target.value);
+                particleSizeValue.textContent = particleSize;
+                material.size = particleSize;
+                material.needsUpdate = true;
+            });
+            
+            // Color theme radio buttons
+            document.querySelectorAll('input[name="colorTheme"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    colorTheme = e.target.value;
+                    updateColors();
+                });
+            });
+            
+            // Mouse controls
+            let isMouseDown = false;
+            let mouseX = 0, mouseY = 0;
+            
+            container.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            container.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                
+                const deltaX = e.clientX - mouseX;
+                const deltaY = e.clientY - mouseY;
+                
+                particles.rotation.y += deltaX * 0.01;
+                particles.rotation.x += deltaY * 0.01;
+                
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            container.addEventListener('mouseup', () => {
+                isMouseDown = false;
+            });
+            
+            // Touch controls
+            container.addEventListener('touchstart', (e) => {
+                isMouseDown = true;
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            });
+            
+            container.addEventListener('touchmove', (e) => {
+                if (!isMouseDown) return;
+                e.preventDefault();
+                
+                const deltaX = e.touches[0].clientX - mouseX;
+                const deltaY = e.touches[0].clientY - mouseY;
+                
+                particles.rotation.y += deltaX * 0.01;
+                particles.rotation.x += deltaY * 0.01;
+                
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            });
+            
+            container.addEventListener('touchend', () => {
+                isMouseDown = false;
+            });
+            
+            // Zoom
+            container.addEventListener('wheel', (e) => {
+                camera.position.z += e.deltaY * 0.5;
+                camera.position.z = Math.max(200, Math.min(1200, camera.position.z));
+            });
+            
+            // Window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            time += 0.016; // ~60fps
+            
+            // Update FPS
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime - lastTime >= 1000) {
+                fps = frameCount;
+                frameCount = 0;
+                lastTime = currentTime;
+                document.getElementById('fps').textContent = fps;
+            }
+            
+            // Update tweens
+            TWEEN.update();
+            
+            // Rotate particles slowly
+            if (!isAnimating) {
+                particles.rotation.y += 0.001;
+            }
+            
+            // Update colors if using cycle theme
+            if (colorTheme === 'cycle') {
+                updateColors();
+            }
+            
+            // Update geometry
+            geometry.attributes.position.needsUpdate = true;
+            geometry.attributes.color.needsUpdate = true;
+            
+            // Render scene
+            renderer.render(scene, camera);
+        }
+        
+        // Start the application
+        init();
+    </script>
+</body>
+</html>

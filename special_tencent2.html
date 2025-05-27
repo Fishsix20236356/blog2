@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Models & Colors - 3D Particle Effects</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: Arial, sans-serif;
+        }
+        
+        #container {
+            width: 100%;
+            height: 100vh;
+        }
+        
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.8;
+            z-index: 100;
+            max-width: 300px;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 100;
+        }
+        
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #555;
+        }
+        
+        .color-button {
+            background: linear-gradient(45deg, #ff0080, #00ff80);
+        }
+        
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="info">
+        <strong>Custom Models & Colors Demo</strong><br>
+        📦 <strong>Custom Models:</strong><br>
+        • Heart Shape<br>
+        • Star Shape<br>
+        • Text "HELLO"<br>
+        • Spiral<br>
+        • DNA Helix<br><br>
+        🎨 <strong>Color Themes:</strong><br>
+        • Rainbow Gradient<br>
+        • Fire Effect<br>
+        • Ocean Waves<br>
+        • Galaxy Colors<br>
+        • Matrix Green
+    </div>
+    <div id="controls">
+        <strong>Model Selection</strong>
+        <select id="modelSelect">
+            <option value="0">Sphere</option>
+            <option value="1">Heart ❤️</option>
+            <option value="2">Star ⭐</option>
+            <option value="3">Text "HELLO"</option>
+            <option value="4">Spiral</option>
+            <option value="5">DNA Helix</option>
+            <option value="6">Custom Function</option>
+        </select>
+        
+        <strong style="display: block; margin-top: 20px;">Color Themes</strong>
+        <button class="color-button" onclick="setColorTheme('rainbow')">Rainbow 🌈</button>
+        <button onclick="setColorTheme('fire')">Fire 🔥</button>
+        <button onclick="setColorTheme('ocean')">Ocean 🌊</button>
+        <button onclick="setColorTheme('galaxy')">Galaxy ✨</button>
+        <button onclick="setColorTheme('matrix')">Matrix 💚</button>
+        <button onclick="setColorTheme('custom')">Custom Gradient</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <script>
+        // Global variables
+        let scene, camera, renderer, container;
+        let particles, geometry, material;
+        let currentModelIndex = 0;
+        let isAnimating = false;
+        let models = [];
+        let colorTheme = 'rainbow';
+        let time = 0;
+        
+        const PARTICLE_COUNT = 15000;
+        const PARTICLE_SIZE = 2;
+        
+        // Initialize the scene
+        function init() {
+            container = document.getElementById('container');
+            
+            // Create scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000000, 0.0005);
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(
+                75,
+                window.innerWidth / window.innerHeight,
+                1,
+                10000
+            );
+            camera.position.z = 600;
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Create particle system
+            createParticleSystem();
+            
+            // Create all models
+            createAllModels();
+            
+            // Add event listeners
+            addEventListeners();
+            
+            // Start animation loop
+            animate();
+        }
+        
+        // Create the main particle system
+        function createParticleSystem() {
+            geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            const colors = new Float32Array(PARTICLE_COUNT * 3);
+            
+            // Initialize positions
+            for (let i = 0; i < PARTICLE_COUNT * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 500;
+                positions[i + 1] = (Math.random() - 0.5) * 500;
+                positions[i + 2] = (Math.random() - 0.5) * 500;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            // Create particle material
+            material = new THREE.PointsMaterial({
+                size: PARTICLE_SIZE,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                opacity: 0.9,
+                sizeAttenuation: true
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            // Apply initial color theme
+            updateColors();
+        }
+        
+        // Create all custom models
+        function createAllModels() {
+            // Model 0: Sphere (basic)
+            const sphereGeometry = new THREE.SphereGeometry(150, 32, 32);
+            models.push(getVerticesFromGeometry(sphereGeometry));
+            
+            // Model 1: Heart shape
+            models.push(createHeartModel());
+            
+            // Model 2: Star shape
+            models.push(createStarModel());
+            
+            // Model 3: Text "HELLO"
+            models.push(createTextModel());
+            
+            // Model 4: Spiral
+            models.push(createSpiralModel());
+            
+            // Model 5: DNA Helix
+            models.push(createDNAHelixModel());
+            
+            // Model 6: Custom mathematical function
+            models.push(createCustomFunctionModel());
+            
+            // Apply first model
+            transitionToModel(0);
+        }
+        
+        // CUSTOM MODEL CREATION METHODS
+        
+        // 1. Heart Shape Model
+        function createHeartModel() {
+            const vertices = [];
+            const scale = 10;
+            
+            // Create heart shape using parametric equations
+            for (let i = 0; i < 1000; i++) {
+                const t = (i / 1000) * Math.PI * 2;
+                
+                // Heart parametric equations
+                const x = scale * 16 * Math.pow(Math.sin(t), 3);
+                const y = scale * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                const z = (Math.random() - 0.5) * 50; // Add some depth
+                
+                vertices.push({ x, y, z });
+            }
+            
+            // Fill volume with more points
+            for (let i = 0; i < 500; i++) {
+                const baseVertex = vertices[i % vertices.length];
+                for (let j = 0; j < 5; j++) {
+                    vertices.push({
+                        x: baseVertex.x + (Math.random() - 0.5) * 30,
+                        y: baseVertex.y + (Math.random() - 0.5) * 30,
+                        z: baseVertex.z + (Math.random() - 0.5) * 30
+                    });
+                }
+            }
+            
+            return vertices;
+        }
+        
+        // 2. Star Shape Model
+        function createStarModel() {
+            const vertices = [];
+            const outerRadius = 200;
+            const innerRadius = 80;
+            const points = 5;
+            const depth = 50;
+            
+            // Create star outline
+            for (let i = 0; i < points * 2; i++) {
+                const angle = (i / (points * 2)) * Math.PI * 2;
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                
+                // Create multiple layers for 3D effect
+                for (let z = -depth; z <= depth; z += 10) {
+                    vertices.push({
+                        x: Math.cos(angle) * radius,
+                        y: Math.sin(angle) * radius,
+                        z: z
+                    });
+                }
+            }
+            
+            // Fill the star
+            for (let i = 0; i < 1000; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = Math.random();
+                const radius = r < 0.5 ? Math.random() * innerRadius : innerRadius + Math.random() * (outerRadius - innerRadius) * 0.5;
+                
+                vertices.push({
+                    x: Math.cos(angle) * radius * r,
+                    y: Math.sin(angle) * radius * r,
+                    z: (Math.random() - 0.5) * depth
+                });
+            }
+            
+            return vertices;
+        }
+        
+        // 3. Text Model (Simple "HELLO")
+        function createTextModel() {
+            const vertices = [];
+            const letterSpacing = 80;
+            const scale = 20;
+            
+            // Define simple letter shapes
+            const letters = {
+                'H': [
+                    [0,0], [0,1], [0,2], [0,3], [0,4],
+                    [2,0], [2,1], [2,2], [2,3], [2,4],
+                    [0,2], [1,2], [2,2]
+                ],
+                'E': [
+                    [0,0], [0,1], [0,2], [0,3], [0,4],
+                    [0,0], [1,0], [2,0],
+                    [0,2], [1,2],
+                    [0,4], [1,4], [2,4]
+                ],
+                'L': [
+                    [0,0], [0,1], [0,2], [0,3], [0,4],
+                    [0,0], [1,0], [2,0]
+                ],
+                'O': [
+                    [0,1], [0,2], [0,3],
+                    [1,0], [1,4],
+                    [2,1], [2,2], [2,3]
+                ]
+            };
+            
+            const text = 'HELLO';
+            let xOffset = -letterSpacing * 2;
+            
+            for (let i = 0; i < text.length; i++) {
+                const letter = letters[text[i]];
+                if (letter) {
+                    letter.forEach(([x, y]) => {
+                        // Create multiple points for each position
+                        for (let j = 0; j < 20; j++) {
+                            vertices.push({
+                                x: xOffset + x * scale + (Math.random() - 0.5) * 10,
+                                y: (y - 2) * scale + (Math.random() - 0.5) * 10,
+                                z: (Math.random() - 0.5) * 30
+                            });
+                        }
+                    });
+                }
+                xOffset += letterSpacing;
+            }
+            
+            return vertices;
+        }
+        
+        // 4. Spiral Model
+        function createSpiralModel() {
+            const vertices = [];
+            const turns = 5;
+            const pointsPerTurn = 200;
+            const maxRadius = 200;
+            const height = 400;
+            
+            for (let i = 0; i < turns * pointsPerTurn; i++) {
+                const t = i / (turns * pointsPerTurn);
+                const angle = t * Math.PI * 2 * turns;
+                const radius = t * maxRadius;
+                const y = (t - 0.5) * height;
+                
+                // Main spiral
+                vertices.push({
+                    x: Math.cos(angle) * radius,
+                    y: y,
+                    z: Math.sin(angle) * radius
+                });
+                
+                // Add thickness
+                for (let j = 0; j < 3; j++) {
+                    vertices.push({
+                        x: Math.cos(angle) * (radius + Math.random() * 20),
+                        y: y + (Math.random() - 0.5) * 10,
+                        z: Math.sin(angle) * (radius + Math.random() * 20)
+                    });
+                }
+            }
+            
+            return vertices;
+        }
+        
+        // 5. DNA Helix Model
+        function createDNAHelixModel() {
+            const vertices = [];
+            const height = 400;
+            const radius = 80;
+            const turns = 3;
+            const pointsPerTurn = 100;
+            
+            for (let strand = 0; strand < 2; strand++) {
+                const phaseShift = strand * Math.PI;
+                
+                for (let i = 0; i < turns * pointsPerTurn; i++) {
+                    const t = i / (turns * pointsPerTurn);
+                    const angle = t * Math.PI * 2 * turns + phaseShift;
+                    const y = (t - 0.5) * height;
+                    
+                    // Helix strands
+                    vertices.push({
+                        x: Math.cos(angle) * radius,
+                        y: y,
+                        z: Math.sin(angle) * radius
+                    });
+                    
+                    // Connections between strands (every 10 points)
+                    if (i % 10 === 0 && strand === 0) {
+                        const oppositeAngle = angle + Math.PI;
+                        for (let j = 0; j < 10; j++) {
+                            const connectionT = j / 10;
+                            vertices.push({
+                                x: Math.cos(angle) * radius * (1 - connectionT) + Math.cos(oppositeAngle) * radius * connectionT,
+                                y: y,
+                                z: Math.sin(angle) * radius * (1 - connectionT) + Math.sin(oppositeAngle) * radius * connectionT
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return vertices;
+        }
+        
+        // 6. Custom Mathematical Function Model
+        function createCustomFunctionModel() {
+            const vertices = [];
+            const size = 20;
+            const scale = 10;
+            
+            // Create a 3D mathematical surface (Klein bottle-like shape)
+            for (let u = 0; u < size; u++) {
+                for (let v = 0; v < size; v++) {
+                    const theta = (u / size) * Math.PI * 2;
+                    const phi = (v / size) * Math.PI * 2;
+                    
+                    // Custom parametric equations
+                    const r = 100 + 50 * Math.cos(phi);
+                    const x = r * Math.cos(theta);
+                    const y = r * Math.sin(theta);
+                    const z = 100 * Math.sin(phi) * Math.sin(theta * 2);
+                    
+                    vertices.push({ x, y, z });
+                    
+                    // Add some randomness for particle effect
+                    for (let k = 0; k < 3; k++) {
+                        vertices.push({
+                            x: x + (Math.random() - 0.5) * 20,
+                            y: y + (Math.random() - 0.5) * 20,
+                            z: z + (Math.random() - 0.5) * 20
+                        });
+                    }
+                }
+            }
+            
+            return vertices;
+        }
+        
+        // Helper function to extract vertices from Three.js geometry
+        function getVerticesFromGeometry(geometry) {
+            const vertices = [];
+            const positions = geometry.attributes.position;
+            
+            for (let i = 0; i < positions.count; i++) {
+                vertices.push({
+                    x: positions.getX(i),
+                    y: positions.getY(i),
+                    z: positions.getZ(i)
+                });
+            }
+            
+            return vertices;
+        }
+        
+        // COLOR THEME FUNCTIONS
+        
+        function setColorTheme(theme) {
+            colorTheme = theme;
+            updateColors();
+        }
+        
+        function updateColors() {
+            const colors = geometry.attributes.color.array;
+            const positions = geometry.attributes.position.array;
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                const x = positions[i3];
+                const y = positions[i3 + 1];
+                const z = positions[i3 + 2];
+                
+                // Calculate position-based factors
+                const distanceFromCenter = Math.sqrt(x*x + y*y + z*z) / 300;
+                const angle = Math.atan2(y, x);
+                const height = (y + 300) / 600; // Normalized height
+                
+                let r, g, b;
+                
+                switch(colorTheme) {
+                    case 'rainbow':
+                        // Rainbow gradient based on angle
+                        const hue = (angle + Math.PI) / (Math.PI * 2);
+                        const rgb = hslToRgb(hue, 1, 0.5 + Math.sin(time) * 0.1);
+                        r = rgb[0];
+                        g = rgb[1];
+                        b = rgb[2];
+                        break;
+                        
+                    case 'fire':
+                        // Fire effect - red to yellow gradient
+                        r = 1;
+                        g = Math.min(1, height * 2 + Math.random() * 0.3);
+                        b = Math.max(0, height - 0.5) * 0.5;
+                        break;
+                        
+                    case 'ocean':
+                        // Ocean waves - blues and greens
+                        r = 0.1 + Math.sin(distanceFromCenter * 10 + time) * 0.1;
+                        g = 0.3 + Math.sin(distanceFromCenter * 10 + time + 1) * 0.2;
+                        b = 0.7 + Math.sin(distanceFromCenter * 10 + time + 2) * 0.3;
+                        break;
+                        
+                    case 'galaxy':
+                        // Galaxy colors - purples, blues, and sparkles
+                        const sparkle = Math.random() > 0.98 ? 1 : 0;
+                        r = 0.4 + distanceFromCenter * 0.4 + sparkle;
+                        g = 0.2 + distanceFromCenter * 0.3 + sparkle;
+                        b = 0.8 + Math.sin(angle * 3) * 0.2 + sparkle;
+                        break;
+                        
+                    case 'matrix':
+                        // Matrix green with occasional white
+                        const isWhite = Math.random() > 0.95;
+                        r = isWhite ? 1 : 0;
+                        g = isWhite ? 1 : 0.5 + Math.random() * 0.5;
+                        b = isWhite ? 1 : 0.1;
+                        break;
+                        
+                    case 'custom':
+                        // Custom gradient - you can modify this!
+                        // Example: Gradient from purple to pink based on position
+                        const t = (x + 200) / 400; // Normalize x position
+                        r = 0.5 + t * 0.5;
+                        g = 0.2 + Math.sin(y * 0.01) * 0.3;
+                        b = 0.8 - t * 0.3;
+                        break;
+                        
+                    default:
+                        r = g = b = 1;
+                }
+                
+                // Apply colors with some randomness
+                colors[i3] = r + (Math.random() - 0.5) * 0.1;
+                colors[i3 + 1] = g + (Math.random() - 0.5) * 0.1;
+                colors[i3 + 2] = b + (Math.random() - 0.5) * 0.1;
+            }
+            
+            geometry.attributes.color.needsUpdate = true;
+        }
+        
+        // Helper function: HSL to RGB conversion
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+            
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            
+            return [r, g, b];
+        }
+        
+        // Transition particles to form a new model
+        function transitionToModel(modelIndex) {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const targetModel = models[modelIndex];
+            const positions = geometry.attributes.position.array;
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                const targetVertex = targetModel[i % targetModel.length];
+                
+                const startPos = {
+                    x: positions[i3],
+                    y: positions[i3 + 1],
+                    z: positions[i3 + 2]
+                };
+                
+                const tween = new TWEEN.Tween(startPos)
+                    .to({
+                        x: targetVertex.x,
+                        y: targetVertex.y,
+                        z: targetVertex.z
+                    }, 2000)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .delay(Math.random() * 500)
+                    .onUpdate(() => {
+                        positions[i3] = startPos.x;
+                        positions[i3 + 1] = startPos.y;
+                        positions[i3 + 2] = startPos.z;
+                    })
+                    .onComplete(() => {
+                        if (i === PARTICLE_COUNT - 1) {
+                            isAnimating = false;
+                            updateColors(); // Update colors after transition
+                        }
+                    })
+                    .start();
+            }
+        }
+        
+        // Event listeners
+        function addEventListeners() {
+            // Model selection
+            document.getElementById('modelSelect').addEventListener('change', (e) => {
+                currentModelIndex = parseInt(e.target.value);
+                transitionToModel(currentModelIndex);
+            });
+            
+            // Mouse controls for rotation
+            let isMouseDown = false;
+            let mouseX = 0, mouseY = 0;
+            
+            container.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            container.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                
+                const deltaX = e.clientX - mouseX;
+                const deltaY = e.clientY - mouseY;
+                
+                particles.rotation.y += deltaX * 0.01;
+                particles.rotation.x += deltaY * 0.01;
+                
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            container.addEventListener('mouseup', () => {
+                isMouseDown = false;
+            });
+            
+            // Zoom
+            container.addEventListener('wheel', (e) => {
+                camera.position.z += e.deltaY * 0.5;
+                camera.position.z = Math.max(200, Math.min(1000, camera.position.z));
+            });
+            
+            // Window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // Make setColorTheme global
+        window.setColorTheme = setColorTheme;
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            time += 0.01;
+            
+            // Update tweens
+            TWEEN.update();
+            
+            // Rotate particles slowly
+            if (!isAnimating) {
+                particles.rotation.y += 0.001;
+            }
+            
+            // Update dynamic colors for some themes
+            if (colorTheme === 'rainbow' || colorTheme === 'ocean') {
+                updateColors();
+            }
+            
+            // Update geometry
+            geometry.attributes.position.needsUpdate = true;
+            geometry.attributes.color.needsUpdate = true;
+            
+            // Render scene
+            renderer.render(scene, camera);
+        }
+        
+        // Start the application
+        init();
+    </script>
+</body>
+</html>

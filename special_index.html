@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects Showcase - Creative Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --primary: #00ff88;
+            --secondary: #ff0088;
+            --accent: #00ffff;
+            --text: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            cursor: none;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(45deg, #000000, #0a0a0a);
+        }
+	
+	.project-card {
+    	    display: block;
+    	    text-decoration: none;
+    	    color: inherit;
+	}
+        
+	.bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at 20% 80%, var(--primary) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, var(--secondary) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, var(--accent) 0%, transparent 50%);
+            opacity: 0.1;
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg) scale(1.5); }
+            to { transform: rotate(360deg) scale(1.5); }
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes gridMove {
+            from { transform: translate(0, 0); }
+            to { transform: translate(50px, 50px); }
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        .cursor::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 50%;
+            transform: scale(1);
+            transition: transform 0.2s ease;
+        }
+
+        .cursor.hover {
+            transform: scale(3);
+        }
+
+        .cursor.hover::before {
+            transform: scale(0.3);
+            background: var(--accent);
+        }
+
+        .cursor-trail {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            z-index: 9998;
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .particle::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Header */
+        .header {
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            position: relative;
+            display: inline-block;
+        }
+
+        .title span {
+            display: inline-block;
+            position: relative;
+            animation: titleFloat 3s ease-in-out infinite;
+            animation-delay: calc(var(--i) * 0.1s);
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .title::before {
+            content: 'PROJECTS';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--primary);
+            z-index: -1;
+            animation: glitch1 2s infinite;
+        }
+
+        .title::after {
+            content: 'PROJECTS';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--secondary);
+            z-index: -1;
+            animation: glitch2 2s infinite;
+        }
+
+        @keyframes glitch1 {
+            0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+            20% { clip-path: inset(33% 0 33% 0); transform: translate(-2px, 2px); }
+            40% { clip-path: inset(66% 0 0 0); transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch2 {
+            0%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+            20% { clip-path: inset(0 0 66% 0); transform: translate(2px, 2px); }
+            40% { clip-path: inset(33% 0 33% 0); transform: translate(-2px, -2px); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-top: 1rem;
+            opacity: 0.8;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Projects Container */
+        .projects-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Project Card */
+        .project-card {
+            position: relative;
+            height: 500px;
+            perspective: 1000px;
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
+            animation-delay: calc(var(--i) * 0.1s);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .project-card:hover .card-inner {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+
+        .card-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .project-card:hover .card-content {
+            border-color: var(--primary);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 136, 0.5),
+                inset 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+
+        /* Holographic Effect */
+        .card-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(0, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .project-card:hover .card-content::before {
+            animation: holographic 1.5s ease-in-out infinite;
+            opacity: 1;
+        }
+
+        @keyframes holographic {
+            0% { transform: rotate(45deg) translateY(-100%); }
+            100% { transform: rotate(45deg) translateY(100%); }
+        }
+
+        /* Project Image */
+        .project-image {
+            position: relative;
+            width: 100%;
+            height: 60%;
+            overflow: hidden;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.6s ease;
+            filter: grayscale(100%) contrast(1.2);
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.1);
+            filter: grayscale(0%) contrast(1);
+        }
+
+        /* Scan Line Effect */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+
+        .project-card:hover .scan-line {
+            opacity: 1;
+            animation: scanLine 2s linear infinite;
+        }
+
+        @keyframes scanLine {
+            from { transform: translateY(0); }
+            to { transform: translateY(500px); }
+        }
+
+        /* Project Info */
+        .project-info {
+            padding: 2rem;
+            position: relative;
+        }
+
+        .project-number {
+            position: absolute;
+            top: -30px;
+            right: 20px;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.05);
+            transition: all 0.4s ease;
+        }
+
+        .project-card:hover .project-number {
+            color: rgba(0, 255, 136, 0.2);
+            transform: scale(1.1);
+        }
+
+        .project-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .project-card:hover .project-title::after {
+            left: 100%;
+        }
+
+        .project-category {
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .project-tech {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            padding: 0.4rem 1rem;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover .tech-tag {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* View Button */
+        .view-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transform: scale(0);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover .view-btn {
+            transform: scale(1) rotate(90deg);
+        }
+
+        .view-btn:hover {
+            transform: scale(1.2) rotate(180deg);
+            background: var(--accent);
+        }
+
+        /* Noise Overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 2;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj4KICA8ZmlsdGVyIGlkPSJub2lzZSI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC45IiBudW1PY3RhdmVzPSI0IiAvPgogIDwvZmlsdGVyPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjEiIC8+Cjwvc3ZnPg==');
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .projects-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .cursor, .cursor-trail {
+                display: none;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            animation: loaderPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes loaderPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* Cyber Lines */
+        .cyber-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cyber-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.1;
+            animation: cyberMove linear infinite;
+        }
+
+        .cyber-line:nth-child(odd) {
+            width: 1px;
+            height: 100%;
+            left: var(--x);
+            animation-duration: 20s;
+        }
+
+        .cyber-line:nth-child(even) {
+            width: 100%;
+            height: 1px;
+            top: var(--y);
+            animation-duration: 15s;
+        }
+
+        @keyframes cyberMove {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader">
+        <div class="loader-content">
+            <div class="loader-text">INITIALIZING...</div>
+        </div>
+    </div>
+
+    <!-- Background Effects -->
+    <div class="bg-animation"></div>
+    <div class="grid-bg"></div>
+    <div class="noise"></div>
+    
+    <!-- Cyber Lines -->
+    <div class="cyber-lines">
+        <div class="cyber-line" style="--x: 10%"></div>
+        <div class="cyber-line" style="--y: 20%"></div>
+        <div class="cyber-line" style="--x: 50%"></div>
+        <div class="cyber-line" style="--y: 60%"></div>
+        <div class="cyber-line" style="--x: 80%"></div>
+        <div class="cyber-line" style="--y: 90%"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1 class="title">
+            <span style="--i: 0">P</span>
+            <span style="--i: 1">R</span>
+            <span style="--i: 2">O</span>
+            <span style="--i: 3">J</span>
+            <span style="--i: 4">E</span>
+            <span style="--i: 5">C</span>
+            <span style="--i: 6">T</span>
+            <span style="--i: 7">S</span>
+        </h1>
+        <p class="subtitle">EXPLORE THE DIGITAL FRONTIER</p>
+    </header>
+
+    <!-- Projects Grid -->
+    <main class="projects-container">
+        <!-- Project 1 -->
+        <a href="special_MusicMouse.html" class="project-card" style="--i: 0">
+            <div class="card-inner">
+                <div class="card-content">
+                    <div class="scan-line"></div>
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=600&fit=crop" alt="音乐鼠标">
+                    </div>
+                    <div class="project-info">
+                        <div class="project-number">01</div>
+                        <h2 class="project-title">音乐鼠标</h2>
+                        <p class="project-category">超级炫酷</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">html</span>
+                            <span class="tech-tag">WebGL</span>
+                        </div>
+                    </div>
+                    <div class="view-btn">→</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Project 2 -->
+        <a href="special_BubbleMouse.html" class="project-card" style="--i: 1">
+            <div class="card-inner">
+                <div class="card-content">
+                    <div class="scan-line"></div>
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop" alt="Cyber Security">
+                    </div>
+                    <div class="project-info">
+                        <div class="project-number">02</div>
+                        <h2 class="project-title">气泡鼠标</h2>
+                        <p class="project-category">清清爽爽</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">html</span>
+                        </div>
+                    </div>
+                    <div class="view-btn">→</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Project 3 -->
+        <a href="special_particle_word.html" class="project-card" style="--i: 2">
+            <div class="card-inner">
+                <div class="card-content">
+                    <div class="scan-line"></div>
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop" alt="AR Experience">
+                    </div>
+                    <div class="project-info">
+                        <div class="project-number">03</div>
+                        <h2 class="project-title">灵动粒子</h2>
+                        <p class="project-category">粒子文字特效</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Unity</span>
+                            <span class="tech-tag">AR Core</span>
+                            <span class="tech-tag">C#</span>
+                        </div>
+                    </div>
+                    <div class="view-btn">→</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Project 4 -->
+        <a href="special_tencent.html" class="project-card" style="--i: 3">
+            <div class="card-inner">
+                <div class="card-content">
+                    <div class="scan-line"></div>
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&h=600&fit=crop" alt="Generative Art">
+                    </div>
+                    <div class="project-info">
+                        <div class="project-number">04</div>
+                        <h2 class="project-title">腾讯up粒子</h2>
+                        <p class="project-category">最成功的作品，由于更新太麻烦，所以最新版都在本地</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Processing</span>
+                            <span class="tech-tag">modeling</span>
+                            <span class="tech-tag">Three.js</span>
+                        </div>
+                    </div>
+                    <div class="view-btn">→</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Project 5 -->
+        <a href="special_tencent2.html" class="project-card" style="--i: 4">
+            <div class="card-inner">
+                <div class="card-content">
+                    <div class="scan-line"></div>
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=600&fit=crop" alt="Data Visualization">
+                    </div>
+                    <div class="project-info">
+                        <div class="project-number">05</div>
+                        <h2 class="project-title">腾讯up粒子plus</h2>
+                        <p class="project-category">这里的颜色很丰富</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">D3.js</span>
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">WebAssembly</span>
+                        </div>
+                    </div>
+                    <div class="view-btn">→</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Project 6 -->
+        <a href="index.html" class="project-card" style="--i: 5">
+            <div class="card-inner">
+                <div class="card-content">
+                    <div class="scan-line"></div>
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=600&fit=crop" alt="IoT Platform">
+                    </div>
+                    <div class="project-info">
+                        <div class="project-number">06</div>
+                        <h2 class="project-title">Synth Grid</h2>
+                        <p class="project-category">IoT Platform</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">MQTT</span>
+                            <span class="tech-tag">Edge Computing</span>
+                        </div>
+                    </div>
+                    <div class="view-btn">→</div>
+                </div>
+            </div>
+        </a>
+    </main>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.loader').classList.add('hidden');
+            }, 100);
+        });
+
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Smooth cursor animation
+        function animateCursor() {
+            const dx = mouseX - cursorX;
+            const dy = mouseY - cursorY;
+            
+            cursorX += dx * 0.1;
+            cursorY += dy * 0.1;
+            
+            cursor.style.left = cursorX - 10 + 'px';
+            cursor.style.top = cursorY - 10 + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor hover effect
+        const hoverElements = document.querySelectorAll('.project-card, .view-btn, .tech-tag');
+        hoverElements.forEach(elem => {
+            elem.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            elem.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Mouse trail effect
+        let trails = [];
+        const maxTrails = 20;
+
+        for (let i = 0; i < maxTrails; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            document.body.appendChild(trail);
+            trails.push(trail);
+        }
+
+        let currentTrail = 0;
+        document.addEventListener('mousemove', (e) => {
+            const trail = trails[currentTrail];
+            trail.style.left = e.clientX - 4 + 'px';
+            trail.style.top = e.clientY - 4 + 'px';
+            trail.style.opacity = '1';
+            trail.style.transform = 'scale(1)';
+            
+            setTimeout(() => {
+                trail.style.opacity = '0';
+                trail.style.transform = 'scale(0)';
+            }, 100);
+            
+            currentTrail = (currentTrail + 1) % maxTrails;
+        });
+
+        // Floating particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(particle);
+
+            const duration = Math.random() * 3000 + 2000;
+            const directionX = (Math.random() - 0.5) * 200;
+            const directionY = (Math.random() - 0.5) * 200;
+
+            particle.animate([
+                { 
+                    opacity: 0, 
+                    transform: 'translate(0, 0) scale(0)' 
+                },
+                { 
+                    opacity: 1, 
+                    transform: `translate(${directionX/2}px, ${directionY/2}px) scale(1)` 
+                },
+                { 
+                    opacity: 0, 
+                    transform: `translate(${directionX}px, ${directionY}px) scale(0)` 
+                }
+            ], {
+                duration: duration,
+                easing: 'ease-out'
+            }).onfinish = () => particle.remove();
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 300);
+
+        // Project card 3D effect on mouse move
+        const projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(card => {
+            const cardInner = card.querySelector('.card-inner');
+            
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                
+                cardInner.style.transform = `rotateY(${rotateY}deg) rotateX(${-rotateX}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                cardInner.style.transform = 'rotateY(0) rotateX(0)';
+            });
+        });
+
+        // Click ripple effect
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.style.position = 'fixed';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            ripple.style.width = '0px';
+            ripple.style.height = '0px';
+            ripple.style.border = '2px solid var(--primary)';
+            ripple.style.borderRadius = '50%';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            document.body.appendChild(ripple);
+
+            ripple.animate([
+                { width: '0px', height: '0px', opacity: 1 },
+                { width: '100px', height: '100px', opacity: 0 }
+            ], {
+                duration: 600,
+                easing: 'ease-out'
+            }).onfinish = () => ripple.remove();
+
+            // Create explosion particles
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'fixed';
+                particle.style.left = e.clientX + 'px';
+                particle.style.top = e.clientY + 'px';
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.background = 'var(--accent)';
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                document.body.appendChild(particle);
+
+                const angle = (i / 12) * Math.PI * 2;
+                const velocity = 100 + Math.random() * 100;
+
+                particle.animate([
+                    { 
+                        transform: 'translate(-50%, -50%) scale(1)',
+                        opacity: 1
+                    },
+                    { 
+                        transform: `translate(${Math.cos(angle) * velocity - 2}px, ${Math.sin(angle) * velocity - 2}px) scale(0)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: 800,
+                    easing: 'ease-out'
+                }).onfinish = () => particle.remove();
+            }
+        });
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const gridBg = document.querySelector('.grid-bg');
+            gridBg.style.transform = `translateY(${scrolled * 0.5}px)`;
+            
+            const bgAnimation = document.querySelector('.bg-animation::before');
+            if (bgAnimation) {
+                bgAnimation.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+
+        // Intersection Observer for staggered animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        projectCards.forEach(card => {
+            card.style.animationPlayState = 'paused';
+            observer.observe(card);
+        });
+
+        // Dynamic tech tag colors
+        const techTags = document.querySelectorAll('.tech-tag');
+        techTags.forEach(tag => {
+            tag.addEventListener('mouseenter', () => {
+                const randomColor = Math.random() > 0.5 ? 'var(--primary)' : 'var(--accent)';
+                tag.style.borderColor = randomColor;
+                tag.style.boxShadow = `0 0 10px ${randomColor}`;
+            });
+            
+            tag.addEventListener('mouseleave', () => {
+                tag.style.borderColor = '';
+                tag.style.boxShadow = '';
+            });
+        });
+    </script>
+</body>
+</html>

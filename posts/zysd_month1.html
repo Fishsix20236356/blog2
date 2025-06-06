@@ -19,7 +19,211 @@
             min-height: 100vh;
             padding: 20px;
         }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .flow-container {
+            display: flex;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1px;
+            margin-bottom: 1px;
+        }
+        .flow-step {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid #3b82f6;
+            position: relative;
+            overflow: hidden;
+        }
+        .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .step-number {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #3b82f6;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        .step-icon {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .step-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1e293b;
+            text-align: center;
+        }
+        .step-details {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 14px;
+            color: #475569;
+        }
+        .step-details ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        .step-details li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #94a3b8;
+        }
+        .tech-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .tech-card {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-3px);
+        }
+        .tech-card h3 {
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .tech-card p {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .metrics {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid #3b82f6;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 10px 0;
+        }
+        .metric-name {
+            font-size: 16px;
+            color: #475569;
+        }
+        .code-sample {
+            background: #1e293b;
+            color: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+        .highlight {
+            color: #60a5fa;
+        }
+        @media (max-width: 1024px) {
+            .flow-container {
+                grid-template-columns: 1fr;
+            }
+            .arrow {
+                display: none;
+            }
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+       .mermaid {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 255, 230, 0.3);
+        overflow-x: auto;
+        white-space: pre-wrap;
+        }
 
+        .node rect {
+        fill: #f4f3f3 !important;
+        stroke: #00ffe7 !important;
+        }
+
+        .node text {
+        fill: #ffffff !important;
+        }
+
+        .subgraph rect {
+        fill: #333333 !important;
+        stroke: #00ffe7 !important;
+        }
+
+        .subgraph text {
+        fill: #00ffe7 !important;
+        }        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -261,11 +465,7 @@
             transform: translateY(-3px);
         }
 
-        .arrow {
-            font-size: 1.5em;
-            color: #3498db;
-            font-weight: bold;
-        }
+
 
         .file-tree {
             background: #2c3e50;
@@ -318,9 +518,6 @@
                 flex-direction: column;
             }
             
-            .arrow {
-                transform: rotate(90deg);
-            }
         }
     </style>
 </head>
@@ -362,7 +559,7 @@
                         </tr>
                         <tr>
                             <td><span class="highlight">研发</span></td>
-                            <td>DeSheng 项目</td>
+                            <td>DS 项目</td>
                             <td>
                                 ① 将 Jupyter 原型重构为模块化包<br>
                                 ② 引入 config.yaml 统一参数管理<br>
@@ -477,7 +674,7 @@
                 <h2 class="section-title">🚀 关键成果详解</h2>
                 
                 <div style="margin-bottom: 30px;">
-                    <h3 style="color: #2c3e50; margin-bottom: 15px;">3.1 THU 时序库 v1.1</h3>
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">3.1 THU 时序库 v1.0</h3>
                     <ul style="margin-left: 20px; line-height: 1.8;">
                         <li><strong>任务迁移：</strong>将原始 exp 逻辑抽象为四大核心任务，接口保持向后兼容</li>
                         <li><strong>数据层重构：</strong>
@@ -491,34 +688,64 @@
                     </ul>
                 </div>
 
-                <div style="margin-bottom: 30px;">
-                    <h3 style="color: #2c3e50; margin-bottom: 15px;">3.2 DeSheng 自动化框架 v0.9</h3>
-                    <div class="flowchart">
-                        <div class="flowchart-title">DeSheng 框架架构图</div>
-                        <div class="flow-diagram">
-                            <div class="flow-box">config.yaml</div>
-                            <div class="arrow">→</div>
-                            <div class="flow-box">desheng.run()</div>
-                            <div class="arrow">→</div>
-                            <div class="flow-box">
-                                <div>ImputationPipeline</div>
-                                <div>ForecastPipeline</div>
-                                <div>AnomalyPipeline</div>
-                                <div>ClassificationPipeline</div>
-                            </div>
-                            <div class="arrow">→</div>
-                            <div class="flow-box">可视化</div>
-                        </div>
+
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">3.2 DS 自动化框架 v1.0</h3>
+                    <div class="mermaid">
+                        flowchart TD
+                          A([数据准备 📄]) --> B([异常处理 🔍])
+                          B --> C([缺失值插补 🤖])
+                          C --> D([特征构建与选择 🧠])
+                          D --> E([预测建模 🔮])
+                          E --> F([结果评估与部署 📊])
+                    
+                          subgraph A内容 [数据准备]
+                            A1(读取+预处理)
+                            A2(异常值置NaN)
+                            A3(按小时重采样)
+                            A4(缺失值填充)
+                            A --> A1 --> A2 --> A3 --> A4
+                          end
+                    
+                          subgraph B内容 [异常处理]
+                            B1(卡尔曼平滑器)
+                            B2(变量分组处理)
+                            B3(观测噪声调整)
+                            B --> B1 --> B2 --> B3
+                          end
+                    
+                          subgraph C内容 [插补]
+                            C1(SAITS模型)
+                            C2(标准化处理)
+                            C3(插补效果可视化)
+                            C --> C1 --> C2 --> C3
+                          end
+                    
+                          subgraph D内容 [特征工程]
+                            D1(滞后特征)
+                            D2(相关性分析MIC/Pearson)
+                            D3(RFECV选择)
+                            D --> D1 --> D2 --> D3
+                          end
+                    
+                          subgraph E内容 [建模]
+                            E1(ModernTCN架构)
+                            E2(训练流程 + 超参)
+                            E --> E1 --> E2
+                          end
+                    
+                          subgraph F内容 [评估与部署]
+                            F1(±0.05命中率等)
+                            F2(可视化 Plotly)
+                            F3(模型保存)
+                            F --> F1 --> F2 --> F3
+                          end
                     </div>
-                    <p style="margin-top: 15px;"><strong>亮点：</strong>CLI 统一入口：<code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px;">python -m desheng.run --task forecast --cfg ./config.yaml</code></p>
-                    <p><strong>收益：</strong>减少 <span class="highlight">60%</span> 脚本维护成本，参数管理更透明</p>
-                </div>
+
 
                 <div>
                     <h3 style="color: #2c3e50; margin-bottom: 15px;">3.3 华为云 API 全流程</h3>
                     <ul style="margin-left: 20px; line-height: 1.8;">
                         <li>完成 Token 获取、数据上传、任务触发、结果拉取 4 步脚本</li>
-                        <li>实测单批 1 万条记录推理耗时 <span class="highlight">3.2s</span>，满足 <5s SLA</li>
                     </ul>
                 </div>
             </div>
@@ -554,120 +781,309 @@
                 <table class="work-table">
                     <thead>
                         <tr>
-                            <th>起止时间</th>
-                            <th>任务</th>
-                            <th>目标</th>
+                            <th>计划开始日期</th>
+                            <th>计划结束日期</th>
+                            <th>关键交付成果</th>
+                            <th>备注</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>05-31 — 06-04</td>
-                            <td>华为 API 测试代码</td>
+                            <td>05-31</td>
+                            <td>06-04</td>
+                            <td>华为API测试全流程代码一份</td>
                             <td>提交最终版 & usage 说明</td>
                         </tr>
                         <tr>
-                            <td>06-03 — 06-04</td>
-                            <td>均值算法 + 结果</td>
+                            <td>06-03</td>
+                            <td>06-04</td>
+                            <td>均值算法实现及时序数据处理结果一份</td>
                             <td>完成报告 & 图表</td>
                         </tr>
                         <tr>
-                            <td>05-31 — 06-06</td>
-                            <td>Loss 函数知识卡</td>
+                            <td>05-31</td>
+                            <td>06-06</td>
+                            <td>Loss函数构造与应用知识卡片一份</td>
                             <td>定稿并归档</td>
                         </tr>
                         <tr>
-                            <td>05-31 — 06-04</td>
-                            <td>多智能体调研</td>
+                            <td>05-31</td>
+                            <td>06-04</td>
+                            <td>多智能体框架全流程调研报告一份</td>
                             <td>输出 8 页 PPT</td>
                         </tr>
                         <tr>
-                            <td>06-03 — 06-04</td>
-                            <td>THU 增强版</td>
+                            <td>06-03</td>
+                            <td>06-04</td>
+                            <td>清华库(THU)功能增强与Bug修复版本</td>
                             <td>修复剩余 Bug、补充单测</td>
                         </tr>
                         <tr>
-                            <td>06-04 — 06-06</td>
-                            <td>与重大教授交流</td>
+                            <td>06-04</td>
+                            <td>06-06</td>
+                            <td>与重庆大学教授交流记录及行业前景分析</td>
                             <td>整理纪要 + 行业分析</td>
                         </tr>
                         <tr>
-                            <td>06-04 — 06-06</td>
-                            <td>华为平台技术报告</td>
+                            <td>06-04</td>
+                            <td>06-06</td>
+                            <td>华为平台技术报告 (核心交付物) 一份</td>
                             <td>核心交付物，重点放在性能对比</td>
                         </tr>
                         <tr>
-                            <td>06-04 — 06-05</td>
-                            <td>稳定版 README + Notebook</td>
+                            <td>06-04</td>
+                            <td>06-05</td>
+                            <td>稳定版代码的README及整合Jupyter文档</td>
                             <td>面向内部发布</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                🚀 时间序列论文调研与汇报：规划研究方向，阅读论文并向导师汇报审阅
+                            </td>
+                            <td>进行中</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                🚀 华为平台技术调研报告撰写：整合测试全流程 + 测试数据 + Loss评估 内容
+                            </td>
+                            <td>进行中</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                🚀 代码整合与文档编写：撰写README文件，将稳定版本功能整合至公司代码库
+                            </td>
+                            <td>进行中</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">华为平台API全流程处理图</h1>
+            <p class="text-lg text-gray-600">从数据预处理到预测结果可视化的完整工作流</p>
+        </div>
 
-            <div class="section">
-                <h2 class="section-title">📁 项目新增代码</h2>
-                <div class="file-tree">
-.
-├─anomaly_detection_exp
-│  │  ana.py
-│  │  anomaly_pipeline_with_viz.py
-│  │  anomaly_processing.py
-│  │  anomaly_visualization.py
-│
-├─data_code
-│  │  data_processor.py
-│  │  feature_engineering.py
-│  │  imputation.py
-│  │  THU_anomaly_detection.py
-│
-├─fail
-│  │  anomaly.py
-│  │  anomalyRUN.py
-│  │  api.py
-│  │  arrayDataFrame.py
-│  │  data_type.py
-│  │  get_token.py
-│  │  json_creater.py
-│  │  list.py
-│  │  new.py
-│
-├─process
-│  │  saits_imputation.pypots
-│
-├─scripts
-│  │  ano.py
-│  │  run_new_2.py
-│  │  run_new_3.py
-│
-├─trainer
-│  │  trainer.py
-│
-├─utils_lty
-│  │  logger.py
-│  │  utils.py
-│
-└─root_level_files
-    │  api_response.json
-    │  config.yaml
-    │  data.json
-    │  fore.py
-    │  fore2HuaWei_Test.py
-    │  fore_main_huawei_test.py
-    │  hourly_si.csv
-    │  impu.py
-    │  mae.py
-    │  metrics_average.py
-    │  run.py
-    │  run_forecast.py
-    │  run_new.py
-    │  run_THU.py
-    │  run_THU_clean.py
-    │  说明.txt
+        <div class="flow-container">
+            <!-- 步骤1: 原始数据预处理 -->
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="step-title">原始数据预处理</div>
+                <div class="step-details">
+                    <p><strong>输入:</strong> tianzhu_bf1_0.2.csv</p>
+                    <p><strong>输出:</strong> tianzhu_api_sliding_window.json</p>
+                    <ul>
+                        <li>定义列名到Unicode的映射关系</li>
+                        <li>使用滑动窗口切分数据</li>
+                        <li>窗口大小=1，上下文长度=48</li>
+                        <li>构建API请求格式：{"context": {"变量": [48个值]}}</li>
+                        <li>分析滑动窗口重叠情况</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- 步骤2: API请求数据构建 -->
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <div class="step-title">API请求数据构建</div>
+                <div class="step-details">
+                    <p><strong>输入:</strong> tianzhu_api_sliding_window.json</p>
+                    <p><strong>输出:</strong> API请求payload</p>
+                    <ul>
+                        <li>设置API端点URL</li>
+                        <li>配置认证头信息：X-Auth-Token, X-Apig-AppCode</li>
+                        <li>加载预处理JSON数据作为payload</li>
+                        <li>准备发送POST请求</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- 步骤3: 调用华为盘古API -->
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <div class="step-title">调用华为盘古API</div>
+                <div class="step-details">
+                    <p><strong>输入:</strong> API请求payload</p>
+                    <p><strong>输出:</strong> api_response.json</p>
+                    <ul>
+                        <li>发送POST请求到盘古模型API</li>
+                        <li>处理响应：成功(200)或失败</li>
+                        <li>解析JSON响应</li>
+                        <li>保存原始响应数据</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- 步骤4: API响应处理 -->
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div class="step-title">API响应处理</div>
+                <div class="step-details">
+                    <p><strong>输入:</strong> api_response.json</p>
+                    <p><strong>输出:</strong> hourly_si.csv</p>
+                    <ul>
+                        <li>提取所有"小时平均SI"预测值</li>
+                        <li>使用重叠平均法恢复连续序列</li>
+                        <li>计算每个位置的平均值</li>
+                        <li>从原始CSV获取时间戳和真实值</li>
+                        <li>对齐时间序列</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- 步骤5: 预测结果后处理 -->
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="step-title">预测结果后处理</div>
+                <div class="step-details">
+                    <p><strong>输入:</strong> hourly_si.csv</p>
+                    <p><strong>输出:</strong> 评估指标与可视化</p>
+                    <ul>
+                        <li>数据清洗：处理缺失值</li>
+                        <li>计算评估指标：MAE, MSE等</li>
+                        <li>使用Plotly绘制双折线图</li>
+                        <li>交互式时间序列展示</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关键技术说明 -->
+        <div class="tech-section">
+            <h2 class="section-title">关键处理技术说明</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3>滑动窗口机制</h3>
+                    <p>窗口大小=1实现密集预测，每个窗口预测未来4个时间点。使用重叠平均法恢复连续序列，有效解决密集预测中的序列恢复问题。</p>
+                </div>
+                <div class="tech-card">
+                    <h3>数据对齐技术</h3>
+                    <p>时间戳精确匹配（从第48行开始），预测值恢复后长度与原始数据长度保持一致（原始数据长度 - context_len）。</p>
+                </div>
+                <div class="tech-card">
+                    <h3>评估指标计算</h3>
+                    <p>使用自定义metric函数计算多种指标：MAE（平均绝对误差）、MSE（均方误差）、RMSE（均方根误差）、MAPE（平均绝对百分比误差）等。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关键代码示例 -->
+        <div class="tech-section">
+            <h2 class="section-title">关键代码示例</h2>
+            
+            <h3 class="font-semibold text-lg text-gray-800 mb-3">滑动窗口处理代码</h3>
+            <div class="code-sample">
+                <span class="highlight">def</span> csv_to_api_format(csv_file, context_len=48, prediction_len=4, window_size=1):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight"># 列名到Unicode映射</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;column_mapping = {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'小时平均SI': '\u5c0f\u65f6\u5e73\u5747SI',<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight"># ...其他11个变量映射...</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;df = pd.read_csv(csv_file)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;data_samples = []<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight"># 滑动窗口切分</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;total_points = len(df)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;num_segments = (total_points - context_len) // window_size + 1<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">for</span> i in range(num_segments):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start_idx = i * window_size<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end_idx = start_idx + context_len<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context_data = {}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">for</span> col in numeric_columns:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unicode_col = column_mapping[col]<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;values = df[col].iloc[start_idx:end_idx].tolist()<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context_data[unicode_col] = values<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_samples.append({"context": context_data})<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">return</span> {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"data": data_samples,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"context_len": context_len,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"prediction_len": prediction_len,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"window_size": window_size<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}
+            </div>
+            
+            <h3 class="font-semibold text-lg text-gray-800 mt-6 mb-3">序列恢复与评估代码</h3>
+            <div class="code-sample">
+                <span class="highlight"># 重叠平均法恢复序列</span><br>
+                result_data = np.array([item["prediction"]["小时平均SI"] for item in data["data"]])<br>
+                result_data = np.expand_dims(result_data, axis=-1)<br>
+                <br>
+                recovered_sum = np.zeros((result_data.shape[0]+result_data.shape[1]-1, 1))<br>
+                recovered_count = np.zeros((result_data.shape[0]+result_data.shape[1]-1, 1))<br>
+                <br>
+                <span class="highlight">for</span> i in range(result_data.shape[0]):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;start = i<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;end = i + result_data.shape[1] - 1<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;window = result_data[i]<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;recovered_sum[start:end+1] += window<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;recovered_count[start:end+1] += 1<br>
+                <br>
+                recovered_data = np.divide(recovered_sum, recovered_count, where=(recovered_count > 0))<br>
+                <br>
+                <span class="highlight"># 计算评估指标</span><br>
+                <span class="highlight">def</span> metric(preds, trues):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;mae = np.mean(np.abs(preds - trues))<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;mse = np.mean((preds - trues)**2)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;rmse = np.sqrt(mse)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;mape = np.mean(np.abs((trues - preds) / trues))<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">return</span> mae, mse, rmse, mape, mspe
+            </div>
+        </div>
+
+        <!-- 评估指标结果 -->
+        <div class="metrics">
+            <h2 class="section-title">典型评估结果</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">0.0139</div>
+                    <div class="metric-name">均方误差 (MSE)</div>
+                    <p class="text-sm mt-2">预测值与真实值差异的平方的平均值，值越小表示模型越好</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.0919</div>
+                    <div class="metric-name">平均绝对误差 (MAE)</div>
+                    <p class="text-sm mt-2">预测值与真实值绝对差异的平均值，更直观的误差指标</p>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
         // 添加页面加载动画
         document.addEventListener('DOMContentLoaded', function() {
@@ -699,6 +1115,10 @@
                 });
             });
         });
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; 
+        mermaid.initialize({ startOnLoad: true });
     </script>
 </body>
 </html>

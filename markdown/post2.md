@@ -2,10 +2,14 @@
 - 时间序列分析实习生
 
 ### 工作任务
-2025.5.6 ~ 2025.6.6 [中冶赛迪月底工作汇报](https://blog2.lutaoyu.site/posts/zysd_month1.html)
+- 2025.5.6 ~ 2025.6.6 [中冶赛迪月底工作汇报](https://blog2.lutaoyu.site/posts/zysd_month1.html)
 
-### 思考
-首先还是比较喜欢这个领域，因为GPU需求和训练时间都很短，项目上手简单
+
+- 2025.5.31~2025.6.6 [华为时序大模型测试](https://blog2.lutaoyu.site/posts/huawei_test.html)
+
+
+
+
 #### 实验领域
 ```
 语言大模型，视觉大模型，多模态大模型

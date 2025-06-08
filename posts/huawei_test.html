@@ -427,6 +427,15 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
         
 
 
@@ -556,7 +565,7 @@
                         <i class="fas fa-trophy"></i>
                     </div>
                     <div class="summary-title">MSE性能</div>
-                    <div class="summary-desc">华为架构MSE更低<br>误差减少66.5%</div>
+                    <div class="summary-desc">华为架构MSE更低</div>
                 </div>
                 <div class="summary-card">
                     <div class="summary-icon loser">
@@ -569,8 +578,8 @@
                     <div class="summary-icon winner">
                         <i class="fas fa-bullseye"></i>
                     </div>
-                    <div class="summary-title">Hit Rate</div>
-                    <div class="summary-desc">华为架构命中率<br>平均提升58%</div>
+                    <div class="summary-title">MAE命中率</div>
+                    <div class="summary-desc">DS架构命中率更高</div>
                 </div>
                 <div class="summary-card">
                     <div class="summary-icon loser">
@@ -591,7 +600,7 @@
                     <p>要把时序数据变成API，需要额外自己写数据切分，整理成json格式，再导入到API文件的payload中，对返回数据进行解码很困难，自己编代码对json进行数据提取与滑动窗口矩阵进行解码。</p>
                 </div>
                 <div class="tech-card">
-                    <h3><i class="fas fa-chart-line-down mr-2"></i>效果参差不齐</h3>
+                    <h3><i class="fas fa-cloud mr-2"></i>效果参差不齐</h3>
                     <p>我们进行5组对照实验，分别使用TZ数据集微调（完整/0.8比例）（96to8/48to4）以及标准ETTh1微调，拟合效果在不同指标上表现不一致，需要综合评估。</p>
                 </div>
                 <div class="tech-card">
@@ -601,226 +610,11 @@
             </div>
         </div>
 
-        <div class="flow-container">
-            <!-- 步骤1: 原始数据预处理 -->
-            <div class="flow-step">
-                <div class="step-number">1</div>
-                <div class="step-icon">
-                    <i class="fas fa-database"></i>
-                </div>
-                <div class="step-title">原始数据预处理</div>
-                <div class="step-details">
-                    <p><strong>输入:</strong> tianzhu_bf1_0.2.csv</p>
-                    <p><strong>输出:</strong> tianzhu_api_sliding_window.json</p>
-                    <ul>
-                        <li>定义列名到Unicode的映射关系</li>
-                        <li>使用滑动窗口切分数据</li>
-                        <li>窗口大小=1，上下文长度=48</li>
-                        <li>构建API请求格式：{"context": {"变量": [48个值]}}</li>
-                        <li>分析滑动窗口重叠情况</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="arrow">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-
-            <!-- 步骤2: API请求数据构建 -->
-            <div class="flow-step">
-                <div class="step-number">2</div>
-                <div class="step-icon">
-                    <i class="fas fa-paper-plane"></i>
-                </div>
-                <div class="step-title">API请求数据构建</div>
-                <div class="step-details">
-                    <p><strong>输入:</strong> tianzhu_api_sliding_window.json</p>
-                    <p><strong>输出:</strong> API请求payload</p>
-                    <ul>
-                        <li>设置API端点URL</li>
-                        <li>配置认证头信息：X-Auth-Token, X-Apig-AppCode</li>
-                        <li>加载预处理JSON数据作为payload</li>
-                        <li>准备发送POST请求</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="arrow">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-
-            <!-- 步骤3: 调用华为盘古API -->
-            <div class="flow-step">
-                <div class="step-number">3</div>
-                <div class="step-icon">
-                    <i class="fas fa-cloud"></i>
-                </div>
-                <div class="step-title">调用华为盘古API</div>
-                <div class="step-details">
-                    <p><strong>输入:</strong> API请求payload</p>
-                    <p><strong>输出:</strong> api_response.json</p>
-                    <ul>
-                        <li>发送POST请求到盘古模型API</li>
-                        <li>处理响应：成功(200)或失败</li>
-                        <li>解析JSON响应</li>
-                        <li>保存原始响应数据</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="arrow">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-
-            <!-- 步骤4: API响应处理 -->
-            <div class="flow-step">
-                <div class="step-number">4</div>
-                <div class="step-icon">
-                    <i class="fas fa-cogs"></i>
-                </div>
-                <div class="step-title">API响应处理</div>
-                <div class="step-details">
-                    <p><strong>输入:</strong> api_response.json</p>
-                    <p><strong>输出:</strong> hourly_si.csv</p>
-                    <ul>
-                        <li>提取所有"小时平均SI"预测值</li>
-                        <li>使用重叠平均法恢复连续序列</li>
-                        <li>计算每个位置的平均值</li>
-                        <li>从原始CSV获取时间戳和真实值</li>
-                        <li>对齐时间序列</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="arrow">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-
-            <!-- 步骤5: 预测结果后处理 -->
-            <div class="flow-step">
-                <div class="step-number">5</div>
-                <div class="step-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="step-title">预测结果后处理</div>
-                <div class="step-details">
-                    <p><strong>输入:</strong> hourly_si.csv</p>
-                    <p><strong>输出:</strong> 评估指标与可视化</p>
-                    <ul>
-                        <li>数据清洗：处理缺失值</li>
-                        <li>计算评估指标：MAE, MSE等</li>
-                        <li>架构性能对比分析</li>
-                        <li>交互式时间序列展示</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- 关键技术说明 -->
-        <div class="tech-b-section">
-            <h2 class="section-title">🔧 关键处理技术说明</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h3><i class="fas fa-window-maximize mr-2"></i>滑动窗口机制</h3>
-                    <p>窗口大小=1实现密集预测，每个窗口预测未来4个时间点。使用重叠平均法恢复连续序列，有效解决密集预测中的序列恢复问题。</p>
-                </div>
-                <div class="tech-card">
-                    <h3><i class="fas fa-sync-alt mr-2"></i>数据对齐技术</h3>
-                    <p>时间戳精确匹配（从第48行开始），预测值恢复后长度与原始数据长度保持一致（原始数据长度 - context_len）。</p>
-                </div>
-                <div class="tech-card">
-                    <h3><i class="fas fa-chart-bar mr-2"></i>评估指标计算</h3>
-                    <p>使用自定义metric函数计算多种指标：MAE（平均绝对误差）、MSE（均方误差）、RMSE（均方根误差）、MAPE（平均绝对百分比误差）、Hit Rate等。</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 关键代码示例 -->
-        <div class="tech-b-section">
-            <h2 class="section-title">💻 关键代码示例</h2>
-            
-            <h3 class="font-semibold text-lg text-gray-800 mb-3">滑动窗口处理代码</h3>
-            <div class="code-sample">
-                <span class="highlight">def</span> csv_to_api_format(csv_file, context_len=48, prediction_len=4, window_size=1):<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight"># 列名到Unicode映射</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;column_mapping = {<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'小时平均SI': '\u5c0f\u65f6\u5e73\u5747SI',<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight"># ...其他11个变量映射...</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;df = pd.read_csv(csv_file)<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;data_samples = []<br>
-                <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight"># 滑动窗口切分</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;total_points = len(df)<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;num_segments = (total_points - context_len) // window_size + 1<br>
-                <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">for</span> i in range(num_segments):<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start_idx = i * window_size<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end_idx = start_idx + context_len<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context_data = {}<br>
-                <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">for</span> col in numeric_columns:<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unicode_col = column_mapping[col]<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;values = df[col].iloc[start_idx:end_idx].tolist()<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context_data[unicode_col] = values<br>
-                <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_samples.append({"context": context_data})<br>
-                <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">return</span> {<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"data": data_samples,<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"context_len": context_len,<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"prediction_len": prediction_len,<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"window_size": window_size<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;}
-            </div>
-            
-            <h3 class="font-semibold text-lg text-gray-800 mt-6 mb-3">序列恢复与评估代码</h3>
-            <div class="code-sample">
-                <span class="highlight"># 重叠平均法恢复序列</span><br>
-                result_data = np.array([item["prediction"]["小时平均SI"] for item in data["data"]])<br>
-                result_data = np.expand_dims(result_data, axis=-1)<br>
-                <br>
-                recovered_sum = np.zeros((result_data.shape[0]+result_data.shape[1]-1, 1))<br>
-                recovered_count = np.zeros((result_data.shape[0]+result_data.shape[1]-1, 1))<br>
-                <br>
-                <span class="highlight">for</span> i in range(result_data.shape[0]):<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;start = i<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;end = i + result_data.shape[1] - 1<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;window = result_data[i]<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;recovered_sum[start:end+1] += window<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;recovered_count[start:end+1] += 1<br>
-                <br>
-                recovered_data = np.divide(recovered_sum, recovered_count, where=(recovered_count > 0))<br>
-                <br>
-                <span class="highlight"># 计算评估指标</span><br>
-                <span class="highlight">def</span> metric(preds, trues):<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;mae = np.mean(np.abs(preds - trues))<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;mse = np.mean((preds - trues)**2)<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;rmse = np.sqrt(mse)<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;mape = np.mean(np.abs((trues - preds) / trues))<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">return</span> mae, mse, rmse, mape, mspe
-            </div>
-        </div>
 
         <!-- 实验结果详细分析 -->
         <div class="tech-section">
             <h2 class="section-title">📈 实验结果详细分析</h2>
             
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h3><i class="fas fa-microscope mr-2"></i>实验设计</h3>
-                    <p>进行了5组对照实验：TZ数据集微调（完整数据）、TZ数据集微调（0.8比例）、96to8预测、48to4预测、标准ETTh1微调。每组实验都采用相同的评估指标进行对比。</p>
-                </div>
-                <div class="tech-card">
-                    <h3><i class="fas fa-balance-scale mr-2"></i>优劣势分析</h3>
-                    <p><strong>华为架构优势：</strong>MSE更低，Hit Rate更高，适合大范围预测。<br><strong>DS架构优势：</strong>R²更好，精确匹配率更高，适合高精度要求场景。</p>
-                </div>
-                <div class="tech-card">
-                    <h3><i class="fas fa-lightbulb mr-2"></i>应用建议</h3>
-                    <p>根据实际应用需求选择架构：需要高精度时选择DS架构；需要良好泛化能力时选择华为架构；可考虑混合架构来兼顾两者优势。</p>
-                </div>
-            </div>
 
             <!-- 详细指标对比表 -->
             <div class="mt-8 bg-gray-50 rounded-12 p-6">
@@ -882,9 +676,7 @@
                     <div class="bg-white rounded-8 p-4 shadow-sm">
                         <h4 class="font-semibold text-green-600 mb-2">✅ 华为架构优势</h4>
                         <ul class="text-sm text-gray-600 space-y-1">
-                            <li>• MSE显著降低，整体预测误差更小</li>
-                            <li>• Hit Rate大幅提升，实用性更强</li>
-                            <li>• Delta MSE表现优异，稳定性较好</li>
+                            <li>• MSE显著降低，数据趋于平稳</li>
                         </ul>
                     </div>
                     <div class="bg-white rounded-8 p-4 shadow-sm">
@@ -906,8 +698,8 @@
                         <p class="text-sm text-gray-600">简化时序数据API调用流程，提供标准化的数据格式转换工具</p>
                     </div>
                     <div class="bg-white rounded-8 p-4 shadow-sm">
-                        <h4 class="font-semibold text-amber-600 mb-2">混合架构</h4>
-                        <p class="text-sm text-gray-600">结合两种架构优势，根据应用场景动态选择最适合的预测方法</p>
+                        <h4 class="font-semibold text-amber-600 mb-2">时序大模型有效性</h4>
+                        <p class="text-sm text-gray-600">华为不一定是时序大模型，现阶段仍然是机器学习与手动标注更有效</p>
                     </div>
                     <div class="bg-white rounded-8 p-4 shadow-sm">
                         <h4 class="font-semibold text-amber-600 mb-2">评估体系</h4>

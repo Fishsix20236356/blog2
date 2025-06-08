@@ -522,6 +522,8 @@
     </style>
 </head>
 <body>
+
+
     <div class="container">
         <div class="header">
             <h1>月度工作汇报</h1>
@@ -530,6 +532,7 @@
 
         <div class="content">
             <div class="section">
+
                 <h2 class="section-title">📊 本月工作概览</h2>
                 <table class="work-table">
                     <thead>
@@ -640,10 +643,6 @@
                         <p>时序实验评估指标及显著性检验</p>
                     </div>
                     <div class="knowledge-card">
-                        <h4>CoT.pdf</h4>
-                        <p>Chain-of-Thought 在时序任务的应用</p>
-                    </div>
-                    <div class="knowledge-card">
                         <h4>LLM4TS链接.html</h4>
                         <p>大模型时序工具链导航页</p>
                     </div>
@@ -654,10 +653,6 @@
                     <div class="knowledge-card">
                         <h4>Q&A.pdf</h4>
                         <p>时序 FAQ 30 问</p>
-                    </div>
-                    <div class="knowledge-card">
-                        <h4>test.txt</h4>
-                        <p>多维基准数据测试脚本</p>
                     </div>
                     <div class="knowledge-card">
                         <h4>time-LLM速读.pdf</h4>
@@ -680,7 +675,6 @@
                         <li><strong>数据层重构：</strong>
                             <ul style="margin-left: 20px; margin-top: 10px;">
                                 <li>插值 ImputationDataset 支持多缺失模式（MCAR、MAR、MNAR）</li>
-                                <li>分类 SequenceLabelDataset 加入窗口化缓存，推理速度提升 <span class="highlight">18%</span></li>
                             </ul>
                         </li>
                         <li><strong>I/O 扩展：</strong>统一采用 pandas.read_csv() + schema 验证，支持列映射与自动类型推断</li>
@@ -742,12 +736,6 @@
                     </div>
 
 
-                <div>
-                    <h3 style="color: #2c3e50; margin-bottom: 15px;">3.3 华为云 API 全流程</h3>
-                    <ul style="margin-left: 20px; line-height: 1.8;">
-                        <li>完成 Token 获取、数据上传、任务触发、结果拉取 4 步脚本</li>
-                    </ul>
-                </div>
             </div>
 
             <div class="section">
@@ -999,6 +987,25 @@
             </div>
         </div>
 
+        
+        <div class="tech-section">
+            <h2 class="section-title">关键问题说明</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3>时序的api真的很难用</h3>
+                    <p>要把时序数据变成API，需要额外自己写数据切分，整理成json格式，再导入到API文件的payload中，对返回数据进行解码很困难，自己编代码对json进行数据提取与滑动窗口矩阵进行解码</p>
+                </div>
+                <div class="tech-card">
+                    <h3>效果极差</h3>
+                    <p>我们进行5组对照实验，分别使用TZ数据集微调（完整/0.8比例）（96to8/48to4）以及标准ETTh1微调，拟合效果肉眼可见的差</p>
+                </div>
+                <div class="tech-card">
+                    <h3>评估指标计算</h3>
+                    <p>引入多种评估指标，进一步证明不行</p>
+                </div>
+            </div>
+        </div>
+
         <!-- 关键代码示例 -->
         <div class="tech-section">
             <h2 class="section-title">关键代码示例</h2>
@@ -1067,22 +1074,7 @@
             </div>
         </div>
 
-        <!-- 评估指标结果 -->
-        <div class="metrics">
-            <h2 class="section-title">典型评估结果</h2>
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-value">0.0139</div>
-                    <div class="metric-name">均方误差 (MSE)</div>
-                    <p class="text-sm mt-2">预测值与真实值差异的平方的平均值，值越小表示模型越好</p>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">0.0919</div>
-                    <div class="metric-name">平均绝对误差 (MAE)</div>
-                    <p class="text-sm mt-2">预测值与真实值绝对差异的平均值，更直观的误差指标</p>
-                </div>
-            </div>
-        </div>
+
     </div>
     <script>
         // 添加页面加载动画

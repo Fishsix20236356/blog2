@@ -486,12 +486,13 @@
     <div class="container">
         <div class="header">
             <h1 class="text-4xl font-bold mb-3">时间序列数据可视化</h1>
+            <p class="text-lg">展示图表使用下采样技术，step=5，使用双指或者鼠标滚动，放大图像，获得详细完整的时序数据信息</p>
         </div>
 
-    <h1>主图表: True vs Predicted Values</h1>
+    <h1>图表一: 华为时序大模型效果</h1>
     <div id="plotlyChart"></div>
 
-    <h1>第二个图表: Random Daily Fluctuations</h1>
+    <h1>图表二: 我的架构效果</h1>
     <div id="plotlyChart2"></div>
 
 
@@ -547,7 +548,7 @@
             };
             
             const layout = {
-                title: 'True vs Predicted Values Over Time (Initial Sampled Data)',
+                title: '真实值 vs 预测值',
                 xaxis: { 
                 title: 'Timestamp',
                 // 不设置 type（或设为 '-'/linear）
@@ -642,7 +643,7 @@
             };
             
             const layout = {
-                title: 'True vs Predicted Values Over Time (Initial Sampled Data)',
+                title: '真实值 vs 预测值',
                 xaxis: { 
                 title: 'Timestamp',
                 // 不设置 type（或设为 '-'/linear）

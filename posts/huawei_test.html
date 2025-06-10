@@ -688,12 +688,12 @@
         // ========== 页面加载时初始化所有图表 ==========
         window.onload = function() {
             // 初始化第一个图表
-            const initialDisplayData = downsampleData(fullChartData, 5); 
-            initChart1(initialDisplayData);
+            //const initialDisplayData = downsampleData(fullChartData, 6); 
+            initChart1(fullChartData);
 
             // 初始化第二个图表
-            const initialDisplayData2 = downsampleData2(fullChartData2, 5);
-            initChart2(initialDisplayData2);
+            //const initialDisplayData2 = downsampleData2(fullChartData2, 3);
+            initChart2(fullChartData2);
         };
     </script>
     </div>

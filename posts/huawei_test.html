@@ -705,103 +705,106 @@
             <p class="text-xl opacity-90">从数据预处理到预测结果可视化的完整工作流及架构对比分析</p>
         </div>
 
-        <!-- 性能对比总览 -->
-        <div class="comparison-section">
-            <h2 class="section-title">🏆 架构性能对比总览</h2>
-            <div class="comparison-grid">
-                <!-- 自己的系统 -->
-                <div class="architecture-card">
-                    <div class="architecture-title ds-title">
-                        <i class="fas fa-desktop mr-2"></i>自己的系统
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">MSE (均方误差)</span>
-                        <span class="metric-value worse">0.0418</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">R² (决定系数)</span>
-                        <span class="metric-value better">0.2192</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">Delta MSE</span>
-                        <span class="metric-value worse">0.0903</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">MAE±0.05命中率</span>
-                        <span class="metric-value better">51.35%</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">MAE±0.1命中率</span>
-                        <span class="metric-value better">80.65%</span>
-                    </div>
-                </div>
-
-                <!-- 华为架构 -->
-                <div class="architecture-card">
-                    <div class="architecture-title huawei-title">
-                        <i class="fas fa-cloud mr-2"></i>华为架构
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">MSE (均方误差)</span>
-                        <span class="metric-value better">0.0140</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">R² (决定系数)</span>
-                        <span class="metric-value worse">0.0311</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">Delta MSE</span>
-                        <span class="metric-value better">0.0129</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">MAE±0.05命中率</span>
-                        <span class="metric-value worse">34.87%</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-name">MAE±0.1命中率</span>
-                        <span class="metric-value worse">62.28%</span>
-                    </div>
-                </div>
-            </div>
-
+        <div class="tech-section">
+            <h2 class="section-title">📈 实验结果详细分析</h2>
             
-            <div class="chart-container">
-                <div class="chart-title">关键指标柱状图对比</div>
-                <canvas id="barChart" width="400" height="200"></canvas>
+            <div class="mt-8 bg-gray-50 rounded-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">📊 详细指标对比表</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-center">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="p-3 text-left font-semibold">评估指标</th>
+                                <th class="p-3 font-semibold">我们的模型</th>
+                                <th class="p-3 font-semibold">华为平台</th>
+                                <th class="p-3 font-semibold">改进幅度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="p-3 font-medium text-left">MSE (均方误差)</td>
+                                <td class="p-3 text-green-600 font-semibold">0.0065</td>
+                                <td class="p-3">0.0119</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-down"></i> 45.45%</td>
+                            </tr>
+                            <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-left">R² (决定系数)</td>
+                                <td class="p-3 text-green-600 font-semibold">0.4692</td>
+                                <td class="p-3">0.0493</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-up"></i> 851.72%</td>
+                            </tr>
+                            <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-left">趋势命中率 (Trend Hit Rate)</td>
+                                <td class="p-3 text-red-600 font-semibold">53.36%</td>
+                                <td class="p-3">55.12%</td>
+                                <td class="p-3 text-red-600 font-semibold"><i class="fas fa-arrow-down"></i> 3.19%</td>
+                            </tr>
+                             <tr class="border-b">
+                                <td class="p-3 font-medium text-left">±0.05 命中率</td>
+                                <td class="p-3 text-green-600 font-semibold">48.77%</td>
+                                <td class="p-3">33.96%</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-up"></i> 43.61%</td>
+                            </tr>
+                            <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-left">±0.1 命中率</td>
+                                <td class="p-3 text-green-600 font-semibold">80.90%</td>
+                                <td class="p-3">63.05%</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-up"></i> 28.31%</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-medium text-left">Huber Loss</td>
+                                <td class="p-3 text-green-600 font-semibold">0.0032</td>
+                                <td class="p-3">0.0060</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-down"></i> 46.67%</td>
+                            </tr>
+                            <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-left">Log-Cosh Loss</td>
+                                <td class="p-3 text-green-600 font-semibold">2.5061</td>
+                                <td class="p-3">3.7633</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-down"></i> 33.41%</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-medium text-left">Quantile Loss</td>
+                                <td class="p-3 text-green-600 font-semibold">0.0313</td>
+                                <td class="p-3">0.0442</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-down"></i> 29.17%</td>
+                            </tr>
+                            <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-left">Soft-DTW Loss</td>
+                                <td class="p-3 text-green-600 font-semibold">5.0322</td>
+                                <td class="p-3">7.5698</td>
+                                <td class="p-3 text-green-600 font-semibold"><i class="fas fa-arrow-down"></i> 33.52%</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-medium text-left">DILATE Loss</td>
+                                <td class="p-3 text-red-600 font-semibold">7.4258</td>
+                                <td class="p-3">6.4238</td>
+                                <td class="p-3 text-red-600 font-semibold"><i class="fas fa-arrow-up"></i> 15.59%</td>
+                            </tr>
+                             <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-left">Phase Compensation Loss</td>
+                                <td class="p-3 text-red-600 font-semibold">5.5885</td>
+                                <td class="p-3">5.3739</td>
+                                <td class="p-3 text-red-600 font-semibold"><i class="fas fa-arrow-up"></i> 3.99%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- 对比总结 -->
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <div class="summary-icon winner">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="summary-title">MSE性能</div>
-                    <div class="summary-desc">华为架构MSE更低</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon loser">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="summary-title">R²表现</div>
-                    <div class="summary-desc">自己的系统R²更好<br>解释能力更强</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon winner">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <div class="summary-title">MAE命中率</div>
-                    <div class="summary-desc">自己的系统命中率更高</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon loser">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="summary-title">稳定性</div>
-                    <div class="summary-desc">自己的系统在精确<br>匹配上表现更好</div>
+            <div class="chart-grid">
+
+                <div class="chart-container">
+                    <div class="chart-title">评估指标分析</div>
+                    <canvas id="radarChart"></canvas>
+
+                    <div class="chart-title">热力图</div>
+                    <!--插入图片-->
+                    <img src="./hot.png" alt="Radar Chart" class="w-full h-auto rounded-lg shadow-md">              
                 </div>
             </div>
         </div>
+
 
         <!-- 关键问题说明 -->
         <div class="tech-a-section">
@@ -813,118 +816,362 @@
                 </div>
                 <div class="tech-card">
                     <h3><i class="fas fa-cloud mr-2"></i>效果参差不齐</h3>
-                    <p>我们进行5组对照实验，分别使用TZ数据集微调（完整/0.8比例）（96to8/48to4）以及标准ETTh1微调，拟合效果在不同指标上表现不一致，需要综合评估。</p>
+                    <p>我们进行5组对照实验，分别使用TZ数据集微调（完整/0.8比例）（96to8/48to4）以及标准ETTh1微调，拟合效果在不同指标上表现不一致，但是表现都很差。</p>
                 </div>
                 <div class="tech-card">
                     <h3><i class="fas fa-calculator mr-2"></i>评估指标多样化</h3>
-                    <p>引入多种评估指标进行全面评估，包括MSE、R²、Hit Rate等，发现不同架构在各指标上各有优势，需要根据实际应用场景选择合适的架构。</p>
+                    <p>引入多种评估指标进行全面评估，包括MSE、R²、Hit Rate等，发现华为数据预测值非常差。</p>
                 </div>
             </div>
         </div>
 
 
-        <!-- 实验结果详细分析 -->
-        <div class="tech-section">
-            <h2 class="section-title">📈 实验结果详细分析</h2>
-            
-
-            <!-- 详细指标对比表 -->
-            <div class="mt-8 bg-gray-50 rounded-12 p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">📊 详细指标对比表</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gray-200">
-                                <th class="p-3 text-left font-semibold">评估指标</th>
-                                <th class="p-3 text-center font-semibold">自己的系统</th>
-                                <th class="p-3 text-center font-semibold">华为架构</th>
-                                <th class="p-3 text-center font-semibold">改进幅度</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b">
-                                <td class="p-3 font-medium">MSE (均方误差)</td>
-                                <td class="p-3 text-center">0.04183</td>
-                                <td class="p-3 text-center text-green-600 font-semibold">0.01399</td>
-                                <td class="p-3 text-center text-green-600">↓ 66.5%</td>
-                            </tr>
-                            <tr class="border-b bg-gray-50">
-                                <td class="p-3 font-medium">R² (决定系数)</td>
-                                <td class="p-3 text-center text-green-600 font-semibold">0.2192</td>
-                                <td class="p-3 text-center">0.0311</td>
-                                <td class="p-3 text-center text-red-600">↓ 114.2%</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="p-3 font-medium">Delta MSE</td>
-                                <td class="p-3 text-center">0.09032</td>
-                                <td class="p-3 text-center text-green-600 font-semibold">0.01287</td>
-                                <td class="p-3 text-center text-green-600">↓ 85.8%</td>
-                            </tr>
-                            <tr class="border-b bg-gray-50">
-                                <td class="p-3 font-medium">MAE±0.05命中率</td>
-                                <td class="p-3 text-center text-green-600 font-semibold">51.35%</td>
-                                <td class="p-3 text-center">34.87%</td>
-                                <td class="p-3 text-center text-red-600">↓ 32.1%</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="p-3 font-medium">MAE±0.1命中率</td>
-                                <td class="p-3 text-center text-green-600 font-semibold">80.65%</td>
-                                <td class="p-3 text-center">62.28%</td>
-                                <td class="p-3 text-center text-red-600">↓ 22.8%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
 
         <!-- 结论与建议 -->
         <div class="tech-section">
             <h2 class="section-title">💡 结论与建议</h2>
+
+            <div class="bg-white rounded-lg p-6 mb-6 shadow-md">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">📊 核心指标总览</h3>
+                <p class="text-sm text-gray-500 mb-4">下表提供两个模型在关键评估维度上的快速对比。</p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border border-gray-200 text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-600">评估维度</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-600">评估指标</th>
+                                <th class="px-4 py-3 text-center font-semibold text-gray-600">我们的模型</th>
+                                <th class="px-4 py-3 text-center font-semibold text-gray-600">华为时序大模型</th>
+                                <th class="px-4 py-3 text-center font-semibold text-gray-600">胜出者</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="bg-blue-50">
+                                <td rowspan="2" class="px-4 py-3 font-semibold text-blue-800 align-middle">点预测精度</td>
+                                <td class="px-4 py-2 text-gray-700">MSE <span class="text-xs text-gray-500">(↓越好)</span></td>
+                                <td class="px-4 py-2 text-center font-bold text-green-600">0.0065</td>
+                                <td class="px-4 py-2 text-center">0.0119</td>
+                                <td class="px-4 py-2 text-center text-green-600 font-bold">✅ 我们的模型</td>
+                            </tr>
+                            <tr class="bg-blue-50">
+                                <td class="px-4 py-2 text-gray-700">R² <span class="text-xs text-gray-500">(↑越好)</span></td>
+                                <td class="px-4 py-2 text-center font-bold text-green-600">0.469</td>
+                                <td class="px-4 py-2 text-center">0.049</td>
+                                <td class="px-4 py-2 text-center text-green-600 font-bold">✅ 我们的模型</td>
+                            </tr>
+                            <tr class="bg-purple-50">
+                                <td class="px-4 py-3 font-semibold text-purple-800 align-middle">业务命中率</td>
+                                <td class="px-4 py-2 text-gray-700">±0.1 命中率 <span class="text-xs text-gray-500">(↑越好)</span></td>
+                                <td class="px-4 py-2 text-center font-bold text-green-600">80.90%</td>
+                                <td class="px-4 py-2 text-center">63.05%</td>
+                                <td class="px-4 py-2 text-center text-green-600 font-bold">✅ 我们的模型</td>
+                            </tr>
+                            <tr class="bg-yellow-50">
+                                <td class="px-4 py-3 font-semibold text-yellow-800 align-middle">鲁棒性</td>
+                                <td class="px-4 py-2 text-gray-700">Huber Loss <span class="text-xs text-gray-500">(↓越好)</span></td>
+                                <td class="px-4 py-2 text-center font-bold text-green-600">0.0032</td>
+                                <td class="px-4 py-2 text-center">0.0060</td>
+                                <td class="px-4 py-2 text-center text-green-600 font-bold">✅ 我们的模型</td>
+                            </tr>
+                            <tr class="bg-teal-50">
+                                <td rowspan="2" class="px-4 py-3 font-semibold text-teal-800 align-middle">形状 & 相位</td>
+                                <td class="px-4 py-2 text-gray-700">Soft-DTW Loss <span class="text-xs text-gray-500">(↓越好)</span></td>
+                                <td class="px-4 py-2 text-center font-bold text-green-600">5.0322</td>
+                                <td class="px-4 py-2 text-center">7.5698</td>
+                                <td class="px-4 py-2 text-center text-green-600 font-bold">✅ 我们的模型</td>
+                            </tr>
+                             <tr class="bg-teal-50">
+                                <td class="px-4 py-2 text-gray-700">DILATE Loss <span class="text-xs text-gray-500">(↓越好)</span></td>
+                                <td class="px-4 py-2 text-center">7.4258</td>
+                                <td class="px-4 py-2 text-center font-bold text-red-600">6.4238</td>
+                                <td class="px-4 py-2 text-center text-red-600 font-bold">华为模型</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>            
+
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">🎯 核心发现</h3>
+                <div class="text-gray-700 space-y-4">
+                    <ol class="list-decimal list-inside space-y-3">
+                        <li>
+                            <strong>卓越的预测精度和拟合优度:</strong>
+                            <p class="mt-1 pl-4">我们的模型在最核心的预测精度指标上取得了压倒性胜利。MSE（0.0065 vs 0.0119）降低了近一半，同时R2（0.469 vs 0.049）提升了近10倍。这表明我们的模型不仅误差更小，而且对数据内在规律的拟合程度远超对手，是更可靠、更具解释力的模型。</p>
+                        </li>
+                        <li>
+                            <strong>出色的鲁棒性和稳定性:</strong>
+                            <p class="mt-1 pl-4">在处理异常值和噪声方面，我们的模型表现更佳。Huber损失（0.0032 vs 0.0060）和Log-Cosh损失（2.5061 vs 3.7633）均显著低于华为模型。这证明我们的模型预测结果更稳定，不易被极端值干扰，这与研究中采用Huber损失等方法来解决异常值敏感性问题的趋势相符 。</p>
+                        </li>
+                        <li>
+                            <strong>对时间序列“形状”的深刻理解:</strong>
+                            <p class="mt-1 pl-4">现代时间序列分析已转向关注形状和模式 。我们的模型在Soft-DTW损失（5.0322 vs 7.5698）上的巨大优势，证明了它能更准确地复现真实数据的时间动态和整体形态，而不仅仅是孤立地预测每一个时间点。这是一种更深层次、更符合时间序列本质的学习能力。</p>
+                        </li>
+                        <li>
+                            <strong>极高的实用价值和可靠性:</strong>
+                            <p class="mt-1 pl-4">在面向应用的命中率指标上，我们的模型同样表现出色。无论是在5%还是10%的误差范围内，我们的命中率（48.77%和80.90%）都远高于华为模型（33.96%和63.05%）。这意味着将模型部署到实际业务中时，我们的模型能够提供更可靠、更精确的决策支持。</p>
+                        </li>
+                    </ol>
+                    <p class="pt-4 border-t border-gray-200">
+                        <strong>总结:</strong> 我们的模型在<strong>预测精度 (MSE, R2)</strong>、<strong>鲁棒性 (Huber, Log-Cosh)</strong> 和 <strong>形状匹配 (Soft-DTW)</strong> 这三个核心维度上均取得了决定性胜利。
+                    </p>
+                </div>
+            </div>
+    
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">🔬 评估指标分析</h3>
+                <div class="text-gray-700 space-y-8">
             
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-12 p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">🎯 核心发现</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white rounded-8 p-4 shadow-sm">
-                        <h4 class="font-semibold text-green-600 mb-2">✅ 华为架构优势</h4>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li>• MSE显著降低，数据趋于平稳</li>
-                        </ul>
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-700">评估指标：MSE (均方误差)</h4>
+                        <p class="mt-1">MSE是衡量“平均误差”的一种常用方法，它计算预测值与真实值之间差值的平方的平均值。MSE对较大的误差给予更重的惩罚 ，并且是一个可微的损失函数 ，便于在模型训练中进行优化。</p>
+                        
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="min-w-full border border-gray-200 text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-4 py-2 text-left border-b">模型</th>
+                                        <th class="px-4 py-2 text-left border-b">MSE</th>
+                                        <th class="px-4 py-2 text-left border-b">相对表现</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-4 py-2 border-b">华为时序大模型</td>
+                                        <td class="px-4 py-2 border-b">0.0119</td>
+                                        <td class="px-4 py-2 border-b text-gray-500">基准</td>
+                                    </tr>
+                                    <tr class="bg-green-50">
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">我们的模型</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">0.0065</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">↓ 45.4%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+            
+                        <div class="mt-4 pl-4 border-l-2 border-green-300">
+                            <p><strong>分析:</strong> 我们的模型的MSE比华为模型降低了45.4%，这表明：</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>点对点预测精度显著更高。</li>
+                                <li>模型产生较大离谱预测的可能性更小。</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="bg-white rounded-8 p-4 shadow-sm">
-                        <h4 class="font-semibold text-blue-600 mb-2">⚖️ 自己的系统优势</h4>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li>• R²值为正，具有一定解释能力</li>
-                            <li>• 精确匹配场景下表现更好</li>
-                            <li>• MAE±0.05和±0.1命中率更高</li>
-                        </ul>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-700">评估指标：R² (R-squared, 决定系数)</h4>
+                        <p class="mt-1">R-squared表示模型所解释的因变量方差的比例。它的值越接近1，表示模型的拟合优度越高。</p>
+                        
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="min-w-full border border-gray-200 text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-4 py-2 text-left border-b">模型</th>
+                                        <th class="px-4 py-2 text-left border-b">R²</th>
+                                        <th class="px-4 py-2 text-left border-b">相对表现</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-4 py-2 border-b">华为时序大模型</td>
+                                        <td class="px-4 py-2 border-b">0.049</td>
+                                        <td class="px-4 py-2 border-b text-gray-500">基准</td>
+                                    </tr>
+                                    <tr class="bg-green-50">
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">我们的模型</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">0.469</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">↑ 857.1%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+            
+                        <div class="mt-4 pl-4 border-l-2 border-green-300">
+                            <p><strong>分析:</strong> 我们的模型的R²值是华为模型的9倍多，这代表了压倒性的优势：</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>模型对数据方差的解释能力极强。</li>
+                                <li>预测值与真实值的相关性远高于对手，拟合效果优越。</li>
+                            </ul>
+                        </div>
                     </div>
+            
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-700">评估指标：Hit Rate (命中率)</h4>
+                        <p class="mt-1">这是一个根据具体业务场景定义的实用评估指标，衡量的是预测值落在真实值特定误差范围内的频率（如±5%或±10%），用于评估模型在可接受误差范围内的预测精度。</p>
+                        
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="min-w-full border border-gray-200 text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-4 py-2 text-left border-b">模型</th>
+                                        <th class="px-4 py-2 text-left border-b">±0.05 命中率</th>
+                                        <th class="px-4 py-2 text-left border-b">±0.1 命中率</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-4 py-2 border-b">华为时序大模型</td>
+                                        <td class="px-4 py-2 border-b">33.96%</td>
+                                        <td class="px-4 py-2 border-b">63.05%</td>
+                                    </tr>
+                                    <tr class="bg-green-50">
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">我们的模型</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">48.77% <span class="text-xs">(↑43.6%)</span></td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">80.90% <span class="text-xs">(↑28.3%)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+            
+                        <div class="mt-4 pl-4 border-l-2 border-green-300">
+                            <p><strong>分析:</strong> 我们的模型在不同精度要求的命中率上均大幅领先，这意味着：</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>在严格的误差范围内（±5%），我们的模型准确率高出43.6%。</li>
+                                <li>在较宽松的误差范围内（±10%），模型覆盖了超过80%的预测点。</li>
+                                <li>模型的业务可靠性和实用价值更高。</li>
+                            </ul>
+                        </div>
+                    </div>
+            
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-700">评估指标：Huber Loss (Huber 损失)</h4>
+                        <p class="mt-1">Huber损失是MSE和MAE的结合体，对小误差使用平方损失，对大误差使用线性损失。这一特性使其对异常值具有鲁棒性 ，在包含噪声的数据集中表现出色。</p>
+                        
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="min-w-full border border-gray-200 text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-4 py-2 text-left border-b">模型</th>
+                                        <th class="px-4 py-2 text-left border-b">Huber Loss</th>
+                                        <th class="px-4 py-2 text-left border-b">相对表现</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-4 py-2 border-b">华为时序大模型</td>
+                                        <td class="px-4 py-2 border-b">0.0060</td>
+                                        <td class="px-4 py-2 border-b text-gray-500">基准</td>
+                                    </tr>
+                                    <tr class="bg-green-50">
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">我们的模型</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">0.0032</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">↓ 46.7%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+            
+                        <div class="mt-4 pl-4 border-l-2 border-green-300">
+                            <p><strong>分析:</strong> 我们的模型的Huber损失比华为模型降低了46.7%，这证明：</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>整体预测误差显著减小。</li>
+                                <li>对数据中的潜在噪声和异常值具有更强的鲁棒性。</li>
+                                <li>预测结果更加稳定可靠。</li>
+                            </ul>
+                        </div>
+                    </div>
+            
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-700">评估指标：Soft-DTW (Soft-DTW 损失)</h4>
+                        <p class="mt-1">Soft-DTW是动态时间规整（DTW）的可微版本，是一种新颖的损失函数 。它专门用于评估两个时间序列的形状相似度，即使它们在时间上存在一定的错位或拉伸，代表了时间序列损失函数从点误差到关注时间动态的演变 。</p>
+                        
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="min-w-full border border-gray-200 text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-4 py-2 text-left border-b">模型</th>
+                                        <th class="px-4 py-2 text-left border-b">Soft-DTW Loss</th>
+                                        <th class="px-4 py-2 text-left border-b">相对表现</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-4 py-2 border-b">华为时序大模型</td>
+                                        <td class="px-4 py-2 border-b">7.5698</td>
+                                        <td class="px-4 py-2 border-b text-gray-500">基准</td>
+                                    </tr>
+                                    <tr class="bg-green-50">
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">我们的模型</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">5.0322</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-green-800">↓ 33.5%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+            
+                        <div class="mt-4 pl-4 border-l-2 border-green-300">
+                            <p><strong>分析:</strong> 我们的模型在Soft-DTW损失上低33.5%，表明：</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>模型生成的预测序列在<strong>形状</strong>上与真实序列更为匹配。</li>
+                                <li>模型更好地学习了时间序列的内在动态模式和结构，而非简单的点对点模仿。</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-700">评估指标：DILATE / Phase</h4>
+                        <p class="mt-1">DILATE  和相位补偿损失  都是关注时间序列形状和相位对齐的先进损失函数。它们明确地处理时间序列数据独有的时间动态问题，是近期研究的焦点 。</p>
+                        
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="min-w-full border border-gray-200 text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-4 py-2 text-left border-b">模型</th>
+                                        <th class="px-4 py-2 text-left border-b">DILATE Loss</th>
+                                        <th class="px-4 py-2 text-left border-b">Phase Comp. Loss</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-red-50">
+                                        <td class="px-4 py-2 border-b font-semibold text-red-800">华为时序大模型</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-red-800">6.4238</td>
+                                        <td class="px-4 py-2 border-b font-semibold text-red-800">5.3739</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-2 border-b">我们的模型</td>
+                                        <td class="px-4 py-2 border-b">7.4258 <span class="text-red-600">(↑15.6%)</span></td>
+                                        <td class="px-4 py-2 border-b">5.5885 <span class="text-red-600">(↑4.0%)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+            
+                        <div class="mt-4 pl-4 border-l-2 border-red-300">
+                            <p><strong>分析:</strong> 在这两项特定的形状/相位对齐指标上，华为模型表现略好。这可能意味着：</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>华为模型在处理特定的时间扭曲和相位校正上可能更具优势。</li>
+                                <li>然而，这种微弱优势被我们模型在核心精度和鲁棒性指标上的巨大差距所抵消。</li>
+                            </ul>
+                        </div>
+                    </div>
+            
                 </div>
             </div>
 
-            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-12 p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">🔧 改进建议</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white rounded-8 p-4 shadow-sm">
-                        <h4 class="font-semibold text-amber-600 mb-2">API易用性</h4>
-                        <p class="text-sm text-gray-600">简化时序数据API调用流程，提供标准化的数据格式转换工具</p>
-                    </div>
-                    <div class="bg-white rounded-8 p-4 shadow-sm">
-                        <h4 class="font-semibold text-amber-600 mb-2">时序大模型有效性</h4>
-                        <p class="text-sm text-gray-600">华为不一定是时序大模型，现阶段仍然是机器学习与手动标注更有效</p>
-                    </div>
-                    <div class="bg-white rounded-8 p-4 shadow-sm">
-                        <h4 class="font-semibold text-amber-600 mb-2">评估体系</h4>
-                        <p class="text-sm text-gray-600">建立更全面的评估指标体系，包含准确性、稳定性、实用性等多维度</p>
-                    </div>
-                </div>
-            </div>
+
         </div>
 
     </div>
 
     <script>
+        const ourModelData = {
+            "mse": 0.5453781512605042,
+            "huber": 0.5333333333333333,
+            "logCosh": 0.665931496293147,
+            "quantile": 0.7081447963800904,
+            "softDtw": 0.6647731776268857,
+            "phaseComp": 1.039933753884516
+        };
 
+        const huaweiData = {
+            "mse": 1,
+            "huber": 1,
+            "logCosh": 1,
+            "quantile": 1,
+            "softDtw": 1,
+            "phaseComp": 1
+        };
         // 添加交互效果
         document.querySelectorAll('.flow-step').forEach(step => {
             step.addEventListener('mouseenter', function() {
@@ -959,53 +1206,54 @@
         });
 
 
-        // 柱状图
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        new Chart(barCtx, {
-            type: 'bar',
+
+        // Radar Chart for Loss Functions
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
             data: {
-                labels: ['MSE', 'R²', 'Delta MSE', 'Hit Rate 0.05', 'Hit Rate 0.1', 'Trend Hit Rate'],
+                labels: ['Huber', 'Log-Cosh', 'Quantile', 'Soft-DTW', 'MSE', 'Phase Comp.'],
                 datasets: [{
-                    label: '自己的系统',
-                    data: [0.04183, 0.2192, 0.09032, 0.5135, 0.8065, 0.5000],
-                    backgroundColor: 'rgba(52, 152, 219, 0.8)',
-                    borderColor: '#3498db',
-                    borderWidth: 1
+                    label: '我们的模型 (越小越好)',
+                    data: [ourModelData.huber, ourModelData.logCosh, ourModelData.quantile, ourModelData.softDtw, ourModelData.mse, ourModelData.phaseComp],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2
                 }, {
-                    label: '华为架构',
-                    data: [0.01399, 0.0311, 0.01287, 0.3487, 0.6228, 0.5000],
-                    backgroundColor: 'rgba(231, 76, 60, 0.8)',
-                    borderColor: '#e74c3c',
-                    borderWidth: 1
+                    label: '华为平台 (越小越好)',
+                    data: [huaweiData.huber, huaweiData.logCosh, huaweiData.quantile, huaweiData.softDtw, huaweiData.mse, huaweiData.phaseComp],
+                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },
+                    legend: { position: 'top' },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += context.parsed.y.toFixed(4);
-                                return label;
-                            }
+                           label: (context) => `{context.dataset.label}: {context.parsed.r.toFixed(4)}`
                         }
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        type: 'logarithmic'
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0,
+                        pointLabels: { font: { size: 12 } },
+                         grid: { color: '#e5e7eb' }
+                    }
+                },
+                elements: {
+                    line: {
+                        borderWidth: 3
                     }
                 }
             }
-        });        
+        });
     </script>
 </body>
 </html>

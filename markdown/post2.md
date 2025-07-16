@@ -3,11 +3,9 @@
 
 ### 工作任务
 - 2025.5.6 ~ 2025.6.6 [中冶赛迪月底工作汇报](https://blog2.lutaoyu.site/posts/zysd_month1.html)
-
-
 - 2025.5.31~2025.6.6 [华为时序大模型测试](https://blog2.lutaoyu.site/posts/huawei_test.html)
-
-
+- 2025.7.16 [异常检测](https://blog2.lutaoyu.site/posts/anomaly_detection.html)
+- 2025.7.16 [时序大模型调研](https://blog2.lutaoyu.site/posts/LTSM.html)
 
 
 #### 实验领域

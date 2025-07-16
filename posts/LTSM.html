@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型性能指标可视化</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metric-name {
+            font-weight: 700;
+            color: #4f46e5;
+        }
+        
+        .metric-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .best-badge {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .worst-badge {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .metric-item {
+            background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        td {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        td:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 2rem 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tab-container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- 头部区域 -->
+        <header class="text-center mb-12 glass-card p-8 floating-element">
+            <h1 class="text-5xl font-bold text-white mb-4">🚀 模型性能指标可视化报告</h1>
+            <p class="text-xl text-white opacity-90 mb-6">深度分析与比较不同AI模型的核心性能指标</p>
+            <div class="flex justify-center space-x-4">
+                <div class="bg-white bg-opacity-20 rounded-full px-6 py-2 text-white">
+                    <span class="font-semibold">THU模型</span>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full px-6 py-2 text-white">
+                    <span class="font-semibold">日晷大模型</span>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full px-6 py-2 text-white">
+                    <span class="font-semibold">tiRex大模型</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 统计概览 -->
+        <div class="stats-grid mb-8">
+            <div class="stat-card">
+                <div class="stat-number" id="total-metrics">10</div>
+                <div class="text-gray-600 font-semibold">评估指标</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="best-model">-</div>
+                <div class="text-gray-600 font-semibold">最佳模型</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avg-score">-</div>
+                <div class="text-gray-600 font-semibold">平均得分</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="performance-gap">-</div>
+                <div class="text-gray-600 font-semibold">性能差距</div>
+            </div>
+        </div>
+
+        <!-- 选项卡导航 -->
+        <div class="tab-container">
+            <button class="tab-button active" onclick="showTab('overview')">📊 概览</button>
+            <button class="tab-button" onclick="showTab('metrics')">📈 指标详情</button>
+            <button class="tab-button" onclick="showTab('formulas')">🔢 公式</button>
+            <button class="tab-button" onclick="showTab('comparison')">⚖️ 比较</button>
+        </div>
+
+        <!-- 概览标签页 -->
+        <div id="overview" class="tab-content active">
+            <div class="card p-8 mb-8">
+                <h2 class="card-title">📊 性能雷达图</h2>
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card p-8 mb-8">
+                <h2 class="card-title">📈 指标对比柱状图</h2>
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 指标详情标签页 -->
+        <div id="metrics" class="tab-content">
+            <div class="card p-8">
+                <h2 class="card-title">📋 指标详细说明</h2>
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-name">MSE (均方误差)</div>
+                        <p class="text-gray-600 mt-2">衡量预测值与真实值之差的平方的平均值，是回归问题中最常用的损失函数之一。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 85%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">R² (决定系数)</div>
+                        <p class="text-gray-600 mt-2">表示模型对因变量变化的解释程度，值越接近1表示模型拟合效果越好。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 90%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Delta MSE</div>
+                        <p class="text-gray-600 mt-2">衡量预测值变化量与真实值变化量之差的平方的平均值，评估模型对趋势的预测能力。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 75%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">MAE (平均绝对误差)</div>
+                        <p class="text-gray-600 mt-2">衡量预测值与真实值之差的绝对值的平均值，对异常值不那么敏感。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 80%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Huber Loss</div>
+                        <p class="text-gray-600 mt-2">结合了MSE和MAE的优点，在误差较小时为平方损失，较大时为线性损失。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 70%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 70%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Log-Cosh Loss</div>
+                        <p class="text-gray-600 mt-2">一种比MSE更平滑的损失函数，对异常值具有良好的鲁棒性。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 65%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Quantile Loss</div>
+                        <p class="text-gray-600 mt-2">用于分位数回归，衡量特定分位数下的预测误差，适用于不确定性量化。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 60%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Soft-DTW Loss</div>
+                        <p class="text-gray-600 mt-2">基于动态时间规整的损失函数，用于衡量两个时间序列的相似性。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 55%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 55%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Dilated Loss</div>
+                        <p class="text-gray-600 mt-2">考虑了时间序列中长期依赖关系的损失函数，适用于捕捉不同时间尺度的模式。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 50%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Phase Loss</div>
+                        <p class="text-gray-600 mt-2">衡量两个时间序列在相位上的差异，评估频率成分的时间偏移。</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">重要性: 45%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 公式标签页 -->
+        <div id="formulas" class="tab-content">
+            <div class="card p-8">
+                <h2 class="card-title">🔢 数学公式详解</h2>
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-name">MSE (均方误差)</div>
+                        <div class="mt-3">$$\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (Y_i - \hat{Y}_i)^2$$</div>
+                        <p class="text-sm text-gray-600 mt-2">其中 $Y_i$ 是真实值，$\hat{Y}_i$ 是预测值，$n$ 是样本数量</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">R² (决定系数)</div>
+                        <div class="mt-3">$$R^2 = 1 - \frac{\sum_{i=1}^{n} (Y_i - \hat{Y}_i)^2}{\sum_{i=1}^{n} (Y_i - \bar{Y})^2}$$</div>
+                        <p class="text-sm text-gray-600 mt-2">其中 $\bar{Y}$ 是真实值的均值</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Delta MSE</div>
+                        <div class="mt-3">$$\text{Delta\_MSE} = \frac{1}{n-1} \sum_{i=2}^{n} ((Y_i - Y_{i-1}) - (\hat{Y}_i - \hat{Y}_{i-1}))^2$$</div>
+                        <p class="text-sm text-gray-600 mt-2">衡量连续时间点之间变化量的预测精度</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">MAE (平均绝对误差)</div>
+                        <div class="mt-3">$$\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |Y_i - \hat{Y}_i|$$</div>
+                        <p class="text-sm text-gray-600 mt-2">使用绝对值而非平方，对异常值更加鲁棒</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Huber Loss</div>
+                        <div class="mt-3">$$L_{\delta}(y, \hat{y}) = \begin{cases} \frac{1}{2}(y - \hat{y})^2 & \text{for } |y - \hat{y}| \le \delta \\ \delta |y - \hat{y}| - \frac{1}{2}\delta^2 & \text{otherwise} \end{cases}$$</div>
+                        <p class="text-sm text-gray-600 mt-2">$\delta$ 是控制从平方损失转换为线性损失的阈值</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Log-Cosh Loss</div>
+                        <div class="mt-3">$$L(y, \hat{y}) = \sum_{i=1}^{n} \log(\cosh(\hat{y}_i - y_i))$$</div>
+                        <p class="text-sm text-gray-600 mt-2">$\cosh$ 是双曲余弦函数，提供平滑的梯度</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Quantile Loss</div>
+                        <div class="mt-3">$$L_q(y, \hat{y}) = \sum_{i: y_i \ge \hat{y}_i} q(y_i - \hat{y}_i) + \sum_{i: y_i < \hat{y}_i} (1-q)(\hat{y}_i - y_i)$$</div>
+                        <p class="text-sm text-gray-600 mt-2">$q$ 是分位数参数，通常取0.5表示中位数</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Soft-DTW Loss</div>
+                        <div class="mt-3 text-center">
+                            <span class="text-sm text-gray-600">基于动态时间规整算法的软化版本</span><br>
+                            <span class="text-xs text-gray-500">公式较为复杂，涉及动态规划和软最小值运算</span>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Dilated Loss</div>
+                        <div class="mt-3 text-center">
+                            <span class="text-sm text-gray-600">基于扩张卷积的损失函数</span><br>
+                            <span class="text-xs text-gray-500">捕捉不同时间尺度的特征模式</span>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">Phase Loss</div>
+                        <div class="mt-3 text-center">
+                            <span class="text-sm text-gray-600">基于傅里叶变换的相位差异</span><br>
+                            <span class="text-xs text-gray-500">评估频域中的时间对齐程度</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 比较标签页 -->
+        <div id="comparison" class="tab-content">
+            <div class="card">
+                <div class="p-8">
+                    <h2 class="card-title">⚖️ 模型性能对比表</h2>
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <div class="flex items-center">
+                            <span class="w-4 h-4 rounded-full bg-green-400 mr-2 pulse-animation"></span>
+                            <span class="text-sm font-semibold">最佳表现</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-4 h-4 rounded-full bg-red-400 mr-2 pulse-animation"></span>
+                            <span class="text-sm font-semibold">最差表现</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-4 h-4 rounded-full bg-yellow-400 mr-2"></span>
+                            <span class="text-sm font-semibold">中等表现</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-4 text-left">指标</th>
+                                <th class="px-6 py-4 text-center">THU模型</th>
+                                <th class="px-6 py-4 text-center">日晷大模型</th>
+                                <th class="px-6 py-4 text-center">tiRex大模型</th>
+                                <th class="px-6 py-4 text-center">性能排名</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metrics-table-body">
+                            <!-- 由JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 原始数据
+        const data = {
+            'THU模型': {
+                mse: 1.0762391090393066, R2: 0.8059381693601608, delta_mse: 0.7917914986610413,
+                mae: 0.7188816070556641, huber_loss: 0.382982462644577, log_cosh_loss: 2389.43896484375,
+                q_loss: 0.35944077372550964, sdtw_loss: 7482.014734188677, dlt_loss: 6492.8785224860585,
+                phase_loss: 6.70966380048538
+            },
+            '日晷大模型': {
+                mse: 1.3488452434539795, R2: 0.7570541203022003, delta_mse: 1.0690027475357056,
+                mae: 0.7129875421524048, huber_loss: 0.40573567152023315, log_cosh_loss: 643.991943359375,
+                q_loss: 0.3564937710762024, sdtw_loss: 2348.3395309003245, dlt_loss: 2104.202081950544,
+                phase_loss: 7.57265808939263
+            },
+            'tiRex大模型': {
+                mse: 1.9602, R2: 0.6469, delta_mse: 1.3294,
+                mae: 1.0916, huber_loss: 0.6811, log_cosh_loss: 1060.5086,
+                q_loss: 0.5458, sdtw_loss: 3412.6230, dlt_loss: 2862.9172,
+                phase_loss: 6.6420
+            }
+        };
+
+        const metricsConfig = {
+            'mse': { name: 'MSE', higherIsBetter: false },
+            'R2': { name: 'R²', higherIsBetter: true },
+            'delta_mse': { name: 'Delta MSE', higherIsBetter: false },
+            'mae': { name: 'MAE', higherIsBetter: false },
+            'huber_loss': { name: 'Huber Loss', higherIsBetter: false },
+            'log_cosh_loss': { name: 'Log-Cosh Loss', higherIsBetter: false },
+            'q_loss': { name: 'Quantile Loss', higherIsBetter: false },
+            'sdtw_loss': { name: 'Soft-DTW Loss', higherIsBetter: false },
+            'dlt_loss': { name: 'Dilated Loss', higherIsBetter: false },
+            'phase_loss': { name: 'Phase Loss', higherIsBetter: false }
+        };
+
+        // 选项卡切换
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // 生成表格
+        function populateTable() {
+            const tableBody = document.getElementById('metrics-table-body');
+            const models = Object.keys(data);
+
+            for (const key in metricsConfig) {
+                const config = metricsConfig[key];
+                const values = models.map(model => data[model][key]);
+                
+                const bestValue = config.higherIsBetter ? Math.max(...values) : Math.min(...values);
+                const worstValue = config.higherIsBetter ? Math.min(...values) : Math.max(...values);
+
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50 transition-all duration-300';
+
+                const th = document.createElement('th');
+                th.scope = 'row';
+                th.className = 'px-6 py-4 font-bold text-gray-900';
+                th.textContent = config.name;
+                row.appendChild(th);
+
+                // 排序模型以确定排名
+                const sortedModels = [...models].sort((a, b) => {
+                    const aVal = data[a][key];
+                    const bVal = data[b][key];
+                    return config.higherIsBetter ? bVal - aVal : aVal - bVal;
+                });
+
+                models.forEach(model => {
+                    const td = document.createElement('td');
+                    td.className = 'px-6 py-4 text-center font-semibold';
+                    const value = data[model][key];
+                    
+                    if (value === bestValue) {
+                        td.classList.add('bg-green-100', 'text-green-800');
+                        td.innerHTML = `${Number.isInteger(value) ? value : value.toFixed(4)} <span class="best-badge">最佳</span>`;
+                    } else if (value === worstValue) {
+                        td.classList.add('bg-red-100', 'text-red-800');
+                        td.innerHTML = `${Number.isInteger(value) ? value : value.toFixed(4)} <span class="worst-badge">最差</span>`;
+                    } else {
+                        td.classList.add('bg-yellow-50', 'text-yellow-800');
+                        td.textContent = Number.isInteger(value) ? value : value.toFixed(4);
+                    }
+                    row.appendChild(td);
+                });
+
+                // 添加排名列
+                const rankingTd = document.createElement('td');
+                rankingTd.className = 'px-6 py-4 text-center';
+                rankingTd.innerHTML = sortedModels.map((model, index) => 
+                    `<div class="mb-1"><span class="inline-block w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold leading-6">${index + 1}</span> ${model}</div>`
+                ).join('');
+                row.appendChild(rankingTd);
+
+                tableBody.appendChild(row);
+            }
+        }
+
+        // 创建雷达图
+        function createRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            const models = Object.keys(data);
+            
+            // 标准化数据用于雷达图显示
+            const normalizedData = {};
+            for (const key in metricsConfig) {
+                const config = metricsConfig[key];
+                const values = models.map(model => data[model][key]);
+                const max = Math.max(...values);
+                const min = Math.min(...values);
+                
+                models.forEach(model => {
+                    if (!normalizedData[model]) normalizedData[model] = {};
+                    let normalizedValue = (data[model][key] - min) / (max - min);
+                    if (!config.higherIsBetter) normalizedValue = 1 - normalizedValue;
+                    normalizedData[model][key] = normalizedValue * 100;
+                });
+            }
+
+            const datasets = models.map((model, index) => ({
+                label: model,
+                data: Object.keys(metricsConfig).map(key => normalizedData[model][key]),
+                backgroundColor: [
+                    'rgba(102, 126, 234, 0.2)',
+                    'rgba(16, 185, 129, 0.2)',
+                    'rgba(245, 101, 101, 0.2)'
+                ][index],
+                borderColor: [
+                    'rgba(102, 126, 234, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 101, 101, 1)'
+                ][index],
+                borderWidth: 2,
+                pointBackgroundColor: [
+                    'rgba(102, 126, 234, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 101, 101, 1)'
+                ][index],
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }));
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.values(metricsConfig).map(config => config.name),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 创建柱状图
+        function createBarChart() {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            const models = Object.keys(data);
+            
+            // 计算每个模型的获胜次数
+            const winCounts = {};
+            models.forEach(model => winCounts[model] = 0);
+            
+            for (const key in metricsConfig) {
+                const config = metricsConfig[key];
+                const values = models.map(model => data[model][key]);
+                const bestValue = config.higherIsBetter ? Math.max(...values) : Math.min(...values);
+                
+                models.forEach(model => {
+                    if (data[model][key] === bestValue) {
+                        winCounts[model]++;
+                    }
+                });
+            }
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: models,
+                    datasets: [{
+                        label: '最佳指标数量',
+                        data: Object.values(winCounts),
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 101, 101, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(102, 126, 234, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 101, 101, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: {
+                                stepSize: 1,
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            const models = Object.keys(data);
+            const totalMetrics = Object.keys(metricsConfig).length;
+            
+            // 计算每个模型的获胜次数
+            const winCounts = {};
+            models.forEach(model => winCounts[model] = 0);
+            
+            for (const key in metricsConfig) {
+                const config = metricsConfig[key];
+                const values = models.map(model => data[model][key]);
+                const bestValue = config.higherIsBetter ? Math.max(...values) : Math.min(...values);
+                
+                models.forEach(model => {
+                    if (data[model][key] === bestValue) {
+                        winCounts[model]++;
+                    }
+                });
+            }
+
+            // 找到最佳模型
+            const bestModel = Object.keys(winCounts).reduce((a, b) => 
+                winCounts[a] > winCounts[b] ? a : b
+            );
+
+            // 计算平均得分（基于获胜次数）
+            const avgScore = Object.values(winCounts).reduce((a, b) => a + b, 0) / models.length;
+
+            // 计算性能差距
+            const maxWins = Math.max(...Object.values(winCounts));
+            const minWins = Math.min(...Object.values(winCounts));
+            const performanceGap = ((maxWins - minWins) / totalMetrics * 100).toFixed(1);
+
+            document.getElementById('total-metrics').textContent = totalMetrics;
+            document.getElementById('best-model').textContent = bestModel;
+            document.getElementById('avg-score').textContent = avgScore.toFixed(1);
+            document.getElementById('performance-gap').textContent = performanceGap + '%';
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            populateTable();
+            updateStats();
+            
+            // 延迟加载图表以确保DOM完全渲染
+            setTimeout(() => {
+                createRadarChart();
+                createBarChart();
+            }, 100);
+        });
+
+        // MathJax配置
+        window.MathJax = {
+            tex: {
+                inlineMath: [[', '], ['\\(', '\\)']],
+                displayMath: [['$', '$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+</body>
+</html>
